@@ -1,46 +1,49 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: matant
- * Date: 8/10/2015
- * Time: 3:23 PM
+ * User: Nir B
+ * Date: 16/08/2015
+ * Time: 17:52
  */
-//implement register to GPSport
-class Register{
-    public  $output;
 
-    function _construct()
-    {
-        $param =array('msg'=>'false');
+include 'response_process.php';
+class Register implements ResponseProcess{
 
-    }
+    public function dataProcess($dblink) {
 
-    public  function reg($params){
+        $name = $_POST['firstname'];
+        $user = $_POST['username'];//send the email as userName
+        $pass = $_POST['password'];
+        $mob = $_POST['mobile'];
+        $birth = $_POST['birthyear'];
+        $gen = $_POST['gender'];
+        $pic = $_POST['picture'];
+
         $output = array();
-        $query = "SELECT * FROM users WHERE users.username ='$params->username' OR users.email = '$params->email'OR users.mobile='$params->mobile'";
-        $result = mysql_query($query);
-        $no_of_rows = mysql_num_rows($result);
-        if($no_of_rows > 0)
-        {
-            $row = mysql_fetch_assoc($result);
-            if($params->username == $row["username"])
-            {
-                $output["user_record"]="username already exist";
-            }elseif($params->email == $row["email"])
-            {
-                $output["email_record"]= "email already exist";
-            }elseif($params->mobile == $row["mobile"])
-            {
-                $output["mobile_record"]="mobile already exist";
-            }
-            $output['msg']=""
-            return false;
-        }else
-        {
 
+        $result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.user= '$user'");
+        $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");
+
+        if((!$result1) || (!$result2)){
+            $output["error_msg"] = "query failed";
+            print(json_encode($output));
         }
 
-    }
+        $no_of_rows1 = mysqli_num_rows($result1);
+        $no_of_rows2 = mysqli_num_rows($result2);
 
+        if ($no_of_rows1 == 1)
+            $output["flag"]="user";   //user already exists
+        else if ($no_of_rows2 == 1)
+            $output["flag"]="mobile";   //mobile already registered
+        else
+        {
+            $output["flag"]="registered";  //user registered
+            mysqli_query($dblink,"INSERT INTO users (username, password, name, mobile, picture, gender, birthyear) VALUES
+               ('$user', '$pass', '$name', '$mob', '$pic', '$gen', '$birth')");
+        }
+
+        return json_encode($output);
+    }
 
 }
