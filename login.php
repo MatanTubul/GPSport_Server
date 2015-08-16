@@ -32,11 +32,11 @@ class Login implements ResponseProcess{
             $row = mysqli_fetch_assoc($result);
             if($pass != $row["password"])
             {
-                $output["flag"]="password";   //password is incorec
+                $output["flag"]="password";   //password is incorrect
             }
             else
                 if ($row["userStatus"]== 1)
-                    $output["flag"]="already connected"; //user allready connected
+                    $output["flag"]="already connected"; //user already connected
                 else
                 {
                     $output["flag"]="verified";          //user can login
