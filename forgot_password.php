@@ -5,6 +5,9 @@
  * Date: 8/10/2015
  * Time: 2:14 PM
  */
+error_reporting(0);
+$tag = $_POST['tag'];
+$output = array();
 $con = mysql_connect('localhost','root','');
 if (!$con)
 {
@@ -18,11 +21,11 @@ if($tag == "forgotpassword")
     $res = mysql_query($query);
     if(!$res)
     {
-        $output["error_msg"] = "query failed";
+        $output["msg"] = "query failed";
         print(json_encode($output));
     }elseif(mysql_num_rows($res)!= 1 ){
 
-        $output["error_msg"] = "Account not found please signup now";
+        $output["msg"] = "Account not found please signup now";
         print(json_encode($output));
     }
 
@@ -34,7 +37,8 @@ if($tag == "forgotpassword")
         $subject = "Forgotten Password";
         $from = 'gpsportg@gmail.com';
         mail($to,$subject,$message);
-        $output["error_msg"] = "Password Recovered";
+        $output["msg"] = "Password Recovered";
+        $output["email"]=$email;
         print(json_encode($output));
     }
 
