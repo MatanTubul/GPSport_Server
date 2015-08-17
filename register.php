@@ -12,17 +12,17 @@ class Register implements ResponseProcess{
     public function dataProcess($dblink) {
 
         $name = $_POST['firstname'];
-        $user = $_POST['username'];//send the email as userName
+        $email = $_POST['email'];//send the email as userName
         $pass = $_POST['password'];
         $mob = $_POST['mobile'];
         $birth = $_POST['birthyear'];
         $gen = $_POST['gender'];
         $pic = $_POST['picture'];
-        $pic = base64_decode($pic);
+        $pic = base64_encode($pic);
 
         $output = array();
 
-        $result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.user= '$user'");
+        $result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$email'");
         $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");
 
         if((!$result1) || (!$result2)){
@@ -40,9 +40,17 @@ class Register implements ResponseProcess{
         else
         {
             $userStatus = 0;
-            $output["flag"]="succeed";  //user registered
-            mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, userstatus, image,mobile) VALUES
-               ('$name', '$user', '$gen', '$birth', '$pass', '$gen','$userStatus','$pic','$mob')");
+              //user registered
+            $inserResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, userstatus, image,mobile) VALUES
+               ('$name', '$email', '$gen', '$birth', '$pass','$userStatus','$pic','$mob')") or die((mysqli_error($dblink)));
+            if(!$inserResult)
+            {
+                $output["query"]="error";
+                $output["error_msg"] = $inserResult;
+                print(json_encode($output));
+            }else
+
+            $output["flag"]="succeed";
         }
 
         return json_encode($output);
