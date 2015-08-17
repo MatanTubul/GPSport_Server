@@ -52,6 +52,7 @@ class Register implements ResponseProcess{
         {
             $userStatus = 0;
               //user registered
+            //insert user details to DB
             $inserResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, userstatus, image,mobile) VALUES
                ('$name', '$email', '$gen', '$birth', '$pass','$userStatus','$imageName','$mob')") or die((mysqli_error($dblink)));
             if(!$inserResult)
