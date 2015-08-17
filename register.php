@@ -18,6 +18,7 @@ class Register implements ResponseProcess{
         $birth = $_POST['birthyear'];
         $gen = $_POST['gender'];
         $pic = $_POST['picture'];
+        $pic = base64_decode($pic);
 
         $output = array();
 
@@ -33,12 +34,12 @@ class Register implements ResponseProcess{
         $no_of_rows2 = mysqli_num_rows($result2);
 
         if ($no_of_rows1 == 1)
-            $output["flag"]="user";   //user already exists
+            $output["flag"]="user already exists";   //user already exists
         else if ($no_of_rows2 == 1)
-            $output["flag"]="mobile";   //mobile already registered
+            $output["flag"]="mobile already exists";   //mobile already registered
         else
         {
-            $output["flag"]="registered";  //user registered
+            $output["flag"]="succeed";  //user registered
             mysqli_query($dblink,"INSERT INTO users (username, password, name, mobile, picture, gender, birthyear) VALUES
                ('$user', '$pass', '$name', '$mob', '$pic', '$gen', '$birth')");
         }
