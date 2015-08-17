@@ -26,9 +26,11 @@ class ForgotPassword implements ResponseProcess{
 
         if ($no_of_rows < 1)
             $output["flag"]="user";   //user not found
-        else
+        else {
+            $row = mysqli_fetch_assoc($result);
             $output["flag"] = "recovered";  //password recovered
-
+            $output["password"] =  $row["password"];
+        }
         return json_encode($output);
     }
 }
