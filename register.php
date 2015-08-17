@@ -39,9 +39,10 @@ class Register implements ResponseProcess{
             $output["flag"]="mobile already exists";   //mobile already registered
         else
         {
+            $userStatus = 0;
             $output["flag"]="succeed";  //user registered
-            mysqli_query($dblink,"INSERT INTO users (username, password, name, mobile, picture, gender, birthyear) VALUES
-               ('$user', '$pass', '$name', '$mob', '$pic', '$gen', '$birth')");
+            mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, userstatus, image,mobile) VALUES
+               ('$name', '$user', '$gen', '$birth', '$pass', '$gen','$userStatus','$pic','$mob')");
         }
 
         return json_encode($output);
