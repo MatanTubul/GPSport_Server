@@ -18,7 +18,18 @@ class Register implements ResponseProcess{
         $birth = $_POST['birthyear'];
         $gen = $_POST['gender'];
         $pic = $_POST['picture'];
-        $pic = base64_encode($pic);
+
+
+        $imageName = $mob.".jpg";
+        $filepath = "images/".$imageName;
+        if(file_exists($filepath))
+        {
+            unlink($filepath); // delete the old file
+        }
+
+        //create a new empty file
+        $myfile =  fopen($filepath,"w") or die("uUnable to opne file!");
+        file_put_contents($filepath,base64_decode($pic));
 
         $output = array();
 
@@ -42,14 +53,13 @@ class Register implements ResponseProcess{
             $userStatus = 0;
               //user registered
             $inserResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, userstatus, image,mobile) VALUES
-               ('$name', '$email', '$gen', '$birth', '$pass','$userStatus','$pic','$mob')") or die((mysqli_error($dblink)));
+               ('$name', '$email', '$gen', '$birth', '$pass','$userStatus','$imageName','$mob')") or die((mysqli_error($dblink)));
             if(!$inserResult)
             {
                 $output["query"]="error";
                 $output["error_msg"] = $inserResult;
                 print(json_encode($output));
             }else
-
             $output["flag"]="succeed";
         }
 
