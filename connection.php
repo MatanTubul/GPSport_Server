@@ -13,6 +13,7 @@ define ('myDB','b12_16183751_GPSsportDB');
 
 $dblink= mysqli_connect(mysql_host, mysql_user, mysql_password,myDB);
 
+
 if (!$dblink)
 {
     $message = sprintf(
@@ -22,4 +23,4 @@ if (!$dblink)
     trigger_error($message);
     return;
 }
-mysqli_select_db($dblink,myDB);
+$resmysqli=mysqli_select_db($dblink,myDB);

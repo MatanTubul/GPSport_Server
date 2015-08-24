@@ -15,17 +15,19 @@ class ForgotPassword implements ResponseProcess{
         $email = $_POST['email'];
         $output = array();
 
-        $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$email'");
+        $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email='$email'");
 
         if(!$result){
+            $output["dblink"]= $dblink;
             $output["error_msg"] = "query failed";
+            $output["query_msg"] = $result;
             print(json_encode($output));
         }
 
         $no_of_rows = mysqli_num_rows($result);
 
         if ($no_of_rows < 1)
-            $output["flag"]="user";   //user not found
+            $output["flag"]="user not found";   //user not found
         else {
             $row = mysqli_fetch_assoc($result);
             $output["flag"] = "recovered";  //password recovered
