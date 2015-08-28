@@ -7,14 +7,17 @@
  */
 
 include 'response_process.php';
+require_once 'PasswordFunctions.php';
 
 class Login implements ResponseProcess{
 
     public function dataProcess($dblink) {
 
         $user = $_POST['username'];
-        $pass = $_POST['password'];
+        $pass = ($_POST['password']);
         $output = array();
+
+        $passFunc = new PasswordFunctions();
 
         $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$user'");
 
@@ -30,12 +33,13 @@ class Login implements ResponseProcess{
         else
         {
             $row = mysqli_fetch_assoc($result);
-            if($pass != $row["password"])
+            $dbPass = $passFunc->decrypt($row["password"],$row["salt"]);
+            if($pass != $dbPass)
             {
                 $output["flag"]="password";   //password is incorrect
             }
             else
-                if ($row["userStatus"]== 1)
+                if ($row["userstatus"]== 1)
                     $output["flag"]="already connected"; //user already connected
                 else
                 {

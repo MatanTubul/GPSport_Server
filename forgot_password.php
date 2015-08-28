@@ -7,6 +7,7 @@
  */
 
 include 'response_process.php';
+require_once 'PasswordFunctions.php';
 
 class ForgotPassword implements ResponseProcess{
 
@@ -14,6 +15,7 @@ class ForgotPassword implements ResponseProcess{
 
         $email = $_POST['email'];
         $output = array();
+        $passFunc = new PasswordFunctions();
 
         $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email='$email'");
 
@@ -31,7 +33,7 @@ class ForgotPassword implements ResponseProcess{
         else {
             $row = mysqli_fetch_assoc($result);
             $output["flag"] = "recovered";  //password recovered
-            $output["password"] =  $row["password"];
+            $output["password"] =  $passFunc->decrypt($row["password"],$row["salt"]);
         }
         return json_encode($output);
     }

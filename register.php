@@ -7,17 +7,23 @@
  */
 
 include 'response_process.php';
+require_once 'PasswordFunctions.php';
 class Register implements ResponseProcess{
 
     public function dataProcess($dblink) {
 
         $name = $_POST['firstname'];
         $email = $_POST['email'];//send the email as userName
-        $pass = $_POST['password'];
+        $pass = ($_POST['password']);
         $mob = $_POST['mobile'];
         $birth = $_POST['birthyear'];
         $gen = $_POST['gender'];
         $pic = $_POST['picture'];
+
+        $passFunc = new PasswordFunctions();
+
+        $salt = $passFunc->random_password();
+        $pass = $passFunc->encrypt($pass, $salt);
 
 
         $imageName = $mob.".jpg";
@@ -37,9 +43,10 @@ class Register implements ResponseProcess{
         $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");
 
         if((!$result1) || (!$result2)){
-            $output["error_msg"] = "query failed";
+            $output["error_msg"] = "signup query failed";
             print(json_encode($output));
         }
+
 
         $no_of_rows1 = mysqli_num_rows($result1);
         $no_of_rows2 = mysqli_num_rows($result2);
@@ -53,8 +60,8 @@ class Register implements ResponseProcess{
             $userStatus = 0;
               //user registered
             //insert user details to DB
-            $inserResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, userstatus, image,mobile) VALUES
-               ('$name', '$email', '$gen', '$birth', '$pass','$userStatus','$imageName','$mob')") or die((mysqli_error($dblink)));
+            $inserResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, salt, userstatus, image,mobile) VALUES
+               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob')") or die((mysqli_error($dblink)));
             if(!$inserResult)
             {
                 $output["query"]="error";

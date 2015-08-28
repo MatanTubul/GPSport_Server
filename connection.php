@@ -9,7 +9,7 @@
 define ('mysql_host','localhost');
 define ('mysql_user','root');
 define ('mysql_password','');
-define ('myDB','b12_16183751_GPSsportDB');
+define ('myDB','1934398_gpsport');
 
 $dblink= mysqli_connect(mysql_host, mysql_user, mysql_password,myDB);
 
