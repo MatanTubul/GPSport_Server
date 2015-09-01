@@ -29,14 +29,14 @@ class Login implements ResponseProcess{
         $no_of_rows = mysqli_num_rows($result);
 
         if ($no_of_rows < 1)
-            $output["flag"]="user";   //user not found
+            $output["flag"]="User was not found";   //user not found
         else
         {
             $row = mysqli_fetch_assoc($result);
             $dbPass = $passFunc->decrypt($row["password"],$row["salt"]);
             if($pass != $dbPass)
             {
-                $output["flag"]="password";   //password is incorrect
+                $output["flag"]="Password is incorrect";   //password is incorrect
             }
             else
                 if ($row["userstatus"]== 1)
@@ -44,6 +44,7 @@ class Login implements ResponseProcess{
                 else
                 {
                     $output["flag"]="verified";          //user can login
+                    $output["name"]=$row["name"];
                     mysqli_query($dblink,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'");
                 }
         }
