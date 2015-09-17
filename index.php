@@ -33,18 +33,25 @@ switch ($tag){
         echo ($forgotpassword->dataProcess ($dblink));
         break;
     }
-    case "logout":
+    case "logout": {
         $user = $_POST["username"];
-        $logutres = mysqli_query($dblink,"UPDATE users SET userstatus = '0' WHERE users.email= '$user'");
-        if(!$logutres)
-        {
+        $logutres = mysqli_query($dblink, "UPDATE users SET userstatus = '0' WHERE users.email= '$user'");
+        if (!$logutres) {
             $output["flag"] = "query failed";
-        }else{
+        } else {
             $output["flag"] = "user logged out";
         }
         print(json_encode($output));
-
         break;
+    }
+
+    case "create_event": {
+        include 'create_event.php';
+        $create = new CreateEvent();
+        echo($create ->dataProcess($dblink));
+        break;
+    }
+
 //case others...
 }
 

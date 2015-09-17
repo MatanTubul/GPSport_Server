@@ -13,7 +13,7 @@ class ForgotPassword implements ResponseProcess{
 
     public function dataProcess($dblink) {
 
-        $email = $_POST['email'];
+        $email = isset($_POST['email']);
         $output = array();
         $passFunc = new PasswordFunctions();
 
