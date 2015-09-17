@@ -52,6 +52,20 @@ switch ($tag){
         break;
     }
 
+    case "profile": {
+        if ($_POST["method"]== 'getprofile')
+        {
+            include 'get_profile.php';
+            $profile = new GetProfile();
+        }
+        else {
+            include 'update_profile.php';
+            $profile = new UpdateProfile();
+        }
+        echo($profile ->dataProcess($dblink));
+        break;
+    }
+
 //case others...
 }
 
