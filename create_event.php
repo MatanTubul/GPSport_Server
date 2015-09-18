@@ -16,7 +16,7 @@ class CreateEvent implements ResponseProcess {
     {
         $output = array();
         $date = $_POST["date"];
-        $sport=$_POST["sport_type"];
+        $sport = $_POST["sport_type"];
         $date = date("Y-m-d",strtotime(str_replace('/','-',$date)));
         $s_time =$_POST["s_time"];
         $e_time = $_POST["e_time"];
