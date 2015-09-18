@@ -34,7 +34,7 @@ class Register implements ResponseProcess{
         }
 
         //create a new empty file
-        $myfile =  fopen($filepath,"w") or die("uUnable to opne file!");
+        $myfile =  fopen($filepath,"w") or die("uUnable to open file!");
         file_put_contents($filepath,base64_decode($pic));
 
         $output = array();
@@ -46,7 +46,6 @@ class Register implements ResponseProcess{
             $output["error_msg"] = "signup query failed";
             print(json_encode($output));
         }
-
 
         $no_of_rows1 = mysqli_num_rows($result1);
         $no_of_rows2 = mysqli_num_rows($result2);
