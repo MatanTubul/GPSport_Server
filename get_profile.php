@@ -7,6 +7,8 @@
  */
 
 include 'response_process.php';
+require_once 'PasswordFunctions.php';
+
 class GetProfile implements ResponseProcess{
 
     public function dataProcess($dblink) {
@@ -24,8 +26,10 @@ class GetProfile implements ResponseProcess{
         $row = mysqli_fetch_assoc($result);
         $output["flag"]="profile details retrieval";
 
-        //$passFunc = new PasswordFunctions();
-        //$output["password"] =  $passFunc->decrypt($row["password"],$row["salt"]);
+        $passFunc = new PasswordFunctions();
+        $pass = $passFunc->decrypt($row["password"],$row["salt"]);
+        $output["password"] = $pass;
+
         $output["name"] =  $row["name"];
         $output["email"] =  $row["email"];
         $output["gender"] =  $row["gender"];
