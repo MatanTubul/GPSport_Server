@@ -24,8 +24,8 @@ class GetProfile implements ResponseProcess{
         $row = mysqli_fetch_assoc($result);
         $output["flag"]="profile details retrieval";
 
-        $passFunc = new PasswordFunctions();
-        $output["password"] =  $passFunc->decrypt($row["password"],$row["salt"]);
+        //$passFunc = new PasswordFunctions();
+        //$output["password"] =  $passFunc->decrypt($row["password"],$row["salt"]);
         $output["name"] =  $row["name"];
         $output["email"] =  $row["email"];
         $output["gender"] =  $row["gender"];
@@ -33,9 +33,9 @@ class GetProfile implements ResponseProcess{
         $output["mobile"] =  $row["mobile"];
 
 
-        $imageName = $row["image"];
-        $filePath = "images/".$imageName;
-        $output["image"] =  base64_decode(file_get_contents($filePath));
+        //$imageName = $row["image"];
+        //$filePath = "images/".$imageName;
+        //$output["image"] =  base64_decode(file_get_contents($filePath));
 
         return json_encode($output);
     }

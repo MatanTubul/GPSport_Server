@@ -53,7 +53,7 @@ switch ($tag){
     }
 
     case "profile": {
-        if ($_POST["method"]== 'getprofile')
+        if ($_POST["method"]== "getprofile")
         {
             include 'get_profile.php';
             $profile = new GetProfile();
