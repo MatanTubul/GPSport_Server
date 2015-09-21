@@ -27,15 +27,15 @@ class Register implements ResponseProcess{
 
 
         $imageName = $mob.".jpg";
-        $filepath = "images/".$imageName;
-        if(file_exists($filepath))
+        $filePath = "images/".$imageName;
+        if(file_exists($filePath))
         {
-            unlink($filepath); // delete the old file
+            unlink($filePath); // delete the old file
         }
 
         //create a new empty file
-        $myfile =  fopen($filepath,"w") or die("uUnable to open file!");
-        file_put_contents($filepath,base64_decode($pic));
+        $myfile =  fopen($filePath,"w") or die("uUnable to open file!");
+        file_put_contents($filePath,base64_decode($pic));
 
         $output = array();
 

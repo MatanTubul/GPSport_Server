@@ -32,10 +32,10 @@ class GetProfile implements ResponseProcess{
         $output["age"] =  $row["age"];
         $output["mobile"] =  $row["mobile"];
 
-
-        //$imageName = $row["image"];
-        //$filePath = "images/".$imageName;
-        //$output["image"] =  base64_decode(file_get_contents($filePath));
+        $imageName = $row["image"];
+        $filePath = "images/".$imageName;
+        $image = base64_encode(file_get_contents($filePath));
+        $output["image"] =  $image;
 
         return json_encode($output);
     }
