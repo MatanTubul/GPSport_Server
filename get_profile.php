@@ -38,7 +38,12 @@ class GetProfile implements ResponseProcess{
 
         $imageName = $row["image"];
         $filePath = "images/".$imageName;
-        $image = base64_encode(file_get_contents($filePath));
+        if (file_exists($filePath)) {
+            $image = base64_encode(file_get_contents($filePath));
+        }
+        else{
+            $image = "nofile";
+        }
         $output["image"] =  $image;
 
         return json_encode($output);
