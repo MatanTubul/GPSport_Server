@@ -11,36 +11,65 @@ require_once 'PasswordFunctions.php';
 class Register implements ResponseProcess{
 
     public function dataProcess($dblink) {
-
         $name = $_POST['firstname'];
-        $email = $_POST['email'];//send the email as userName
+
+        $prevEmail = $_POST['prevemail'];
+        $newEmail = $_POST['newemail'];
         $pass = ($_POST['password']);
-        $mob = $_POST['mobile'];
+        $newMob = $_POST['newmobile'];
+        $prevMob = $_POST['prevmobile'];
         $birth = $_POST['birthyear'];
         $gen = $_POST['gender'];
         $pic = $_POST['picture'];
-
+        $whoAsChanged = $_POST ['changed'];
+        //none, email only, mobile only, both
         $output = array();
 
-        $result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$email'");
-        $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");
+        function ValidateUniqueField($dblink , $fieldToBeChecked)
+        {
+            $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$fieldToBeChecked'");
 
-        if((!$result1) || (!$result2)){
-            $output["error_msg"] = "signup query failed";
-            print(json_encode($output));
+            if(!$result) {
+                $output["error_msg"] = "signup query failed";
+                print(json_encode($output));
+            }
+
+            $no_of_rows = mysqli_num_rows($result);
+            if ($no_of_rows == 1)
+                return false;
+            return true;
         }
 
-        $no_of_rows1 = mysqli_num_rows($result1);
-        $no_of_rows2 = mysqli_num_rows($result2);
-
-        //if mobile/email was changed recheck fields
-        if ($no_of_rows1 == 1) {
-            $output["flag"] = "user already exists";   //user already exists
-            return json_encode($output);
-        }
-        if ($no_of_rows2 == 1) {
-            $output["flag"] = "mobile already exists";   //mobile already registered
-            return json_encode($output);
+        $output["usercheck"] = "user check";
+        $output["mobilecheck"] = "mobile check";
+//validation of unique fields
+        switch ($whoAsChanged) {
+            case "none":
+                break;
+            case "email only":
+                if (!ValidateUniqueField($dblink,$newEmail)) {
+                    $output["usercheck"] = "user already exists";       //user already exists
+                    $output["flag"] = "wrong input";
+                    return json_encode($output);
+                }
+                break;
+            case "mobile only":
+                if (!ValidateUniqueField($dblink,$newMob)) {
+                    $output["mobilecheck"] = "mobile already exists";   //mobile already registered
+                    $output["flag"] = "wrong input";
+                    return json_encode($output);
+                }
+                break;
+            case "both":
+                if (!($valid1 = ValidateUniqueField($dblink,$newEmail)))
+                    $output["usercheck"] = "user already exists";       //user already exists
+                if (!($valid2 = ValidateUniqueField($dblink,$newMob)))
+                    $output["mobilecheck"] = "mobile already exists";   //mobile already registered
+                if ((!$valid1) || (!$valid2)) {
+                    $output["flag"] = "wrong input";
+                    return json_encode($output);
+                }
+                    break;
         }
 
         $passFunc = new PasswordFunctions();
@@ -48,30 +77,33 @@ class Register implements ResponseProcess{
         $salt = $passFunc->random_password();
         $pass = $passFunc->encrypt($pass, $salt);
 
-        $imageName = $mob.".jpg";
+        $imageName = $prevMob.".jpg";
         $filePath = "images/".$imageName;
         if(file_exists($filePath))
         {
             unlink($filePath); // delete the old file
         }
 
+        $imageName = $newMob.".jpg";
+        $filePath = "images/".$imageName;
         //create a new empty file
         $myfile =  fopen($filePath,"w") or die("uUnable to open file!");
         file_put_contents($filePath,base64_decode($pic));
 
-            //insert user details to DB
-        $insertResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, salt, image,mobile) VALUES
-        ('$name', '$email', '$gen', '$birth', '$pass','$salt','$imageName','$mob')") or die((mysqli_error($dblink)));
+        //update user details to DB
+        $updateResult=mysqli_query($dblink,"UPDATE users SET (name, email, gender, age, password, salt, image,mobile) VALUES
+        ('$name', '$newEmail', '$gen', '$birth', '$pass','$salt','$imageName','$newMob') WHERE users.email='$prevEmail'") or die((mysqli_error($dblink)));
 
-        if(!$insertResult)
+        if(!$updateResult)
             {
                 $output["query"]="error";
-                $output["error_msg"] = $insertResult;
+                $output["error_msg"] = $updateResult;
                 print(json_encode($output));}
         else
                 $output["flag"]="succeed";
 
         return json_encode($output);
     }
+
 
 }
