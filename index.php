@@ -65,6 +65,12 @@ switch ($tag){
         echo($profile ->dataProcess($dblink));
         break;
     }
+    case "search_user": {
+        include 'search_user.php';
+        $users = new SearchUser();
+        echo($users ->dataProcess($dblink));
+        break;
+    }
 
 //case others...
 }
