@@ -5,7 +5,7 @@
  * Date: 9/24/2015
  * Time: 11:29 AM
  */
-
+include 'response_process.php';
 class SearchUser implements ResponseProcess{
 
 
@@ -13,8 +13,8 @@ class SearchUser implements ResponseProcess{
     {
         $output = array();
         $name = $_POST["name"];
-
-        $query = "SELECT * FROM users WHERE users.name LIKE '%'$name''";
+        $output["flag"]="user found";
+        $query = "SELECT * FROM users WHERE users.name LIKE '$name%'";
 
         $result = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
 
@@ -28,16 +28,15 @@ class SearchUser implements ResponseProcess{
                 $output["flag"]="user not found";   //user not found
             else{
                 $output["flag"]="user found";
-                $index = 0;
                 while($row = mysqli_fetch_assoc($result))
                 {
-                    $jsonArrayPbject = (array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"]));
+                    $jsonArrayPbject[]= array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"]);
                     $output[$row["email"]] = $jsonArrayPbject;
                 }
             }
 
         }
-        print(json_encode($output));
+        echo json_encode($output);
 
     }
 }
