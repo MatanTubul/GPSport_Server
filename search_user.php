@@ -28,11 +28,13 @@ class SearchUser implements ResponseProcess{
                 $output["flag"]="user not found";   //user not found
             else{
                 $output["flag"]="user found";
+                $output["users"] = array();
                 while($row = mysqli_fetch_assoc($result))
                 {
-                    $jsonArrayPbject[]= array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"]);
-                    $output[$row["email"]] = $jsonArrayPbject;
+                    $output["users"][] =  array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"]);
                 }
+
+
             }
 
         }
