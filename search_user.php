@@ -37,6 +37,8 @@ class SearchUser implements ResponseProcess{
 
             }
 
+
+
         }
 
         echo json_encode($output);
