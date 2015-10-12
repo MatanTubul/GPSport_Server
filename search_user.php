@@ -31,11 +31,16 @@ class SearchUser implements ResponseProcess{
                 $output["users"] = array();
                 while($row = mysqli_fetch_assoc($result))
                 {
-                    $output["users"][] =  array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"]);
+                    $img_path = "images/".$row["image"];
+
+                    $imgdata = base64_encode(file_get_contents($img_path));
+                    $output["users"][] =  array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"],"image" => $imgdata);
                 }
 
 
             }
+
+
 
         }
 
