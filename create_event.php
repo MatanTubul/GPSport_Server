@@ -15,7 +15,6 @@ class CreateEvent implements ResponseProcess {
     public function dataProcess($dblink)
     {
         $output = array();
-        //$date = $_POST["date"];
         $sport = $_POST["sport_type"];
         $date = date("Y-m-d",strtotime(str_replace('/','-',$_POST["date"])));
         $s_time =$_POST["s_time"];
@@ -56,54 +55,75 @@ class CreateEvent implements ResponseProcess {
                     // return (json_encode($output));
                 }
                 if(isset($_POST["invitedUsers"])){
-                    $query = "SELECT id From event WHERE event.event_date = '$date' and event.start_time = '$s_time'";
-                    $event_s_res = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
-
+                    $query_id = "SELECT id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
+                    $event_s_res = mysqli_query($dblink,$query_id) or die (mysqli_error($dblink));
                     if(!$event_s_res)
                     {
                         $output["flag"] = "failed";
                         $output["msg"] = "Event id not found";
                     }
                     else{
-                        /*$no_of_rows = mysqli_num_rows($event_s_res);
-                        if ($no_of_rows < 1)
-                            $output["event"]="event not found";   //user not found
-                        else {
-                            $output["flag"] = "user found";
-                            $output["users"] = array();
-                            $row = mysqli_fetch_assoc($result);
-                            $output["row"]= $row;
-                        }
-                        $query = "insert into attending (event_id,user_mobile,status)VALUES";
-                        // this is where the magic happens
-                        $array = json_decode($_POST["invitedUsers"],true);
-                        $it = new ArrayIterator( $array );
-                        $output["invited_users"]=$array;
-
-                        // a new caching iterator gives us access to hasNext()
-                        $cit = new CachingIterator( $it );
-                        $status = "deny";
-                        // loop over the array
-                        foreach ( $cit as $value )
+                        $row = mysqli_fetch_assoc($event_s_res);
+                        $no_of_rows = mysqli_num_rows($event_s_res);
+                        if($no_of_rows > 1 || $no_of_rows == 0)
                         {
-                            $cit->
-                            // add to the query
-                            $query .= "('".$row["id"]."','" .$cit->current()."','".$status."')";
-                            // if there is another array member, add a comma
-                            if( $cit->hasNext() )
+                            $output["flag"] = "failed";
+                            $output["msg"] = "Event id not found";
+                        }
+                        else{
+                            $event_id = $row["id"];
+                            $json = $_POST["jsoninvited"];
+                            $json = json_decode($json);
+                            $output["size_invited"] = count($json);
+                            $query_users = "SELECT id From users WHERE ";
+                            $i=0;
+                            $size_of_param = (count($json));
+                            foreach($json as $user) {
+                                if ($i < $size_of_param - 1)
+                                    // add a space at end of this string
+                                    $query_users .= "users.mobile = '".$user."' or ";
+                                else {
+                                    // and this one too
+                                    $query_users .= "users.mobile = '".$user."' ";
+                                    $output["users"][] = $user['mobile'];
+                                }
+                                $i++;
+                                $output["index"]=$i;
+                            }
+                            $output["user_query"]= $query_users;
+
+                            $event_user_s_res = mysqli_query($dblink,$query_users) or die (mysqli_error($dblink));
+                            if(!$event_user_s_res)
                             {
-                                $query .= ",";
+                                $output["flag"] = "failed";
+                                $output["msg"] = "user id not found";
+                            }
+
+                            $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
+                            $i=0;
+                            $status = "deny";
+                            while($row_user = mysqli_fetch_assoc($event_user_s_res))
+                            {
+                                if($i<$size_of_param - 1)
+                                    $insert_query .= "('" .$event_id. "','" .$row_user["id"]. "','" .$status. "'), ";
+                                else
+                                    $insert_query .= "('".$event_id."','".$row_user["id"]."','".$status."') ";
+                                $i++;
+                            }
+                            $insert_query_res = mysqli_query($dblink,$insert_query) or die (mysqli_error($dblink));
+                            if(!$insert_query_res)
+                            {
+                                $output["flag"] = "failed";
+                                $output["msg"] = "failed to inserrt to attending table";
+                            }else{
+                                $output["id_query"]= $insert_query;
+                                $output["msg"] = "success to insert into attending";
                             }
                         }
-                        $insert_u_res = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
-                        if(!$insert_u_res){
-                            $output["flag"] = "failed to insert invited users";
-                            $output["msg"] = $insert_u_res;
-                        }
-                        */
+
+
                     }
                 }
-
 
             }
             else {
