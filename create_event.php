@@ -26,6 +26,7 @@ class CreateEvent implements ResponseProcess {
         $sched = $_POST["scheduled"];
         $gen = $_POST["gender"];
         $min_age = $_POST["minAge"];
+        $manager = $_POST["manager"];
 
         $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
                 AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time') OR (event.end_time BETWEEN '$s_time' AND '$e_time'))";
@@ -48,82 +49,88 @@ class CreateEvent implements ResponseProcess {
                 $output["flag"] = "success";
                 $output["msg"] = "insert event";
 
-                $result = mysqli_query($dblink, "INSERT into event(kind_of_sport,event_date,start_time,end_time,longtitude,latitude,private,gender,min_age,max_participants,,current_participants,scheduled,event_status)
-             VALUES ('$sport','$date','$s_time','$e_time','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($dblink));
+                $result = mysqli_query($dblink, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,longtitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
+             VALUES ('$manager','$sport','$date','$s_time','$e_time','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($dblink));
                 if (!$result) {
                     $output["flag"] = "failed to create event";
                     // return (json_encode($output));
+
                 }
-                if(isset($_POST["invitedUsers"])){
-                    $query_id = "SELECT id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
-                    $event_s_res = mysqli_query($dblink,$query_id) or die (mysqli_error($dblink));
-                    if(!$event_s_res)
-                    {
-                        $output["flag"] = "failed";
-                        $output["msg"] = "Event id not found";
-                    }
-                    else{
-                        $row = mysqli_fetch_assoc($event_s_res);
-                        $no_of_rows = mysqli_num_rows($event_s_res);
-                        if($no_of_rows > 1 || $no_of_rows == 0)
+                else{
+
+                    if(isset($_POST["invitedUsers"])){
+                        $query_id = "SELECT id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
+                        $event_s_res = mysqli_query($dblink,$query_id) or die (mysqli_error($dblink));
+                        if(!$event_s_res)
                         {
                             $output["flag"] = "failed";
                             $output["msg"] = "Event id not found";
                         }
                         else{
-                            $event_id = $row["id"];
-                            $json = $_POST["jsoninvited"];
-                            $json = json_decode($json);
-                            $output["size_invited"] = count($json);
-                            $query_users = "SELECT id From users WHERE ";
-                            $i=0;
-                            $size_of_param = (count($json));
-                            foreach($json as $user) {
-                                if ($i < $size_of_param - 1)
-                                    // add a space at end of this string
-                                    $query_users .= "users.mobile = '".$user."' or ";
-                                else {
-                                    // and this one too
-                                    $query_users .= "users.mobile = '".$user."' ";
-                                    $output["users"][] = $user['mobile'];
+                            $row = mysqli_fetch_assoc($event_s_res);
+                            $no_of_rows = mysqli_num_rows($event_s_res);
+                            if($no_of_rows > 1 || $no_of_rows == 0)
+                            {
+                                $output["flag"] = "failed";
+                                $output["msg"] = "Event id not found";
+                            }
+                            else{
+                                $event_id = $row["id"];
+                                $json = $_POST["jsoninvited"];
+                                $json = json_decode($json);
+                                $output["size_invited"] = count($json);
+                                $query_users = "SELECT id From users WHERE ";
+                                $i=0;
+                                $size_of_param = (count($json));
+                                foreach($json as $user) {
+                                    if ($i < $size_of_param - 1)
+                                        // add a space at end of this string
+                                        $query_users .= "users.mobile = '".$user."' or ";
+                                    else {
+                                        // and this one too
+                                        $query_users .= "users.mobile = '".$user."' ";
+                                        $output["users"][] = $user['mobile'];
+                                    }
+                                    $i++;
+                                    $output["index"]=$i;
                                 }
-                                $i++;
-                                $output["index"]=$i;
-                            }
-                            $output["user_query"]= $query_users;
+                                $output["user_query"]= $query_users;
 
-                            $event_user_s_res = mysqli_query($dblink,$query_users) or die (mysqli_error($dblink));
-                            if(!$event_user_s_res)
-                            {
-                                $output["flag"] = "failed";
-                                $output["msg"] = "user id not found";
+                                $event_user_s_res = mysqli_query($dblink,$query_users) or die (mysqli_error($dblink));
+                                if(!$event_user_s_res)
+                                {
+                                    $output["flag"] = "failed";
+                                    $output["msg"] = "user id not found";
+                                }
+
+                                $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
+                                $i=0;
+                                $status = "deny";
+                                while($row_user = mysqli_fetch_assoc($event_user_s_res))
+                                {
+                                    if($i<$size_of_param - 1)
+                                        $insert_query .= "('" .$event_id. "','" .$row_user["id"]. "','" .$status. "'), ";
+                                    else
+                                        $insert_query .= "('".$event_id."','".$row_user["id"]."','".$status."') ";
+                                    $i++;
+                                }
+                                $insert_query_res = mysqli_query($dblink,$insert_query) or die (mysqli_error($dblink));
+                                if(!$insert_query_res)
+                                {
+                                    $output["flag"] = "failed";
+                                    $output["msg"] = "failed to inserrt to attending table";
+                                }else{
+                                    $output["id_query"]= $insert_query;
+                                    $output["msg"] = "success to insert into attending";
+                                }
                             }
 
-                            $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
-                            $i=0;
-                            $status = "deny";
-                            while($row_user = mysqli_fetch_assoc($event_user_s_res))
-                            {
-                                if($i<$size_of_param - 1)
-                                    $insert_query .= "('" .$event_id. "','" .$row_user["id"]. "','" .$status. "'), ";
-                                else
-                                    $insert_query .= "('".$event_id."','".$row_user["id"]."','".$status."') ";
-                                $i++;
-                            }
-                            $insert_query_res = mysqli_query($dblink,$insert_query) or die (mysqli_error($dblink));
-                            if(!$insert_query_res)
-                            {
-                                $output["flag"] = "failed";
-                                $output["msg"] = "failed to inserrt to attending table";
-                            }else{
-                                $output["id_query"]= $insert_query;
-                                $output["msg"] = "success to insert into attending";
-                            }
+
                         }
-
-
                     }
+
                 }
+
 
             }
             else {
