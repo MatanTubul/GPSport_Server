@@ -10,6 +10,21 @@ include 'response_process.php';
 require_once 'PasswordFunctions.php';
 class Register implements ResponseProcess{
 
+    function ValidateUniqueField($dblink , $fieldToBeChecked)
+    {
+        $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$fieldToBeChecked'");
+
+        if(!$result) {
+            $output["error_msg"] = "signup query failed";
+            print(json_encode($output));
+        }
+
+        $no_of_rows = mysqli_num_rows($result);
+        if ($no_of_rows == 1)
+            return false;
+        return true;
+    }
+
     public function dataProcess($dblink) {
         $name = $_POST['firstname'];
 
@@ -24,21 +39,6 @@ class Register implements ResponseProcess{
         $whoAsChanged = $_POST ['changed'];
         //none, email only, mobile only, both
         $output = array();
-
-        function ValidateUniqueField($dblink , $fieldToBeChecked)
-        {
-            $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$fieldToBeChecked'");
-
-            if(!$result) {
-                $output["error_msg"] = "signup query failed";
-                print(json_encode($output));
-            }
-
-            $no_of_rows = mysqli_num_rows($result);
-            if ($no_of_rows == 1)
-                return false;
-            return true;
-        }
 
         $output["usercheck"] = "user check";
         $output["mobilecheck"] = "mobile check";
@@ -87,7 +87,7 @@ class Register implements ResponseProcess{
         $imageName = $newMob.".jpg";
         $filePath = "images/".$imageName;
         //create a new empty file
-        $myfile =  fopen($filePath,"w") or die("uUnable to open file!");
+        $myfile =  fopen($filePath,"w") or die("Unable to open file!");
         file_put_contents($filePath,base64_decode($pic));
 
         //update user details to DB
@@ -99,8 +99,10 @@ class Register implements ResponseProcess{
                 $output["query"]="error";
                 $output["error_msg"] = $updateResult;
                 print(json_encode($output));}
-        else
-                $output["flag"]="succeed";
+        else {
+            $output["flag"]="succeed";
+            $output["usecase"] = "update";
+        }
 
         return json_encode($output);
     }
