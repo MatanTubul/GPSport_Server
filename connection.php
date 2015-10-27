@@ -10,6 +10,7 @@ define ('mysql_host','localhost');
 define ('mysql_user','root');
 define ('mysql_password','');
 define ('myDB','1934398_gpsport');
+define ("GOOGLE_API_KEY","AIzaSyBSGW3kNZ_GNsBsTdJBKsyAbcTfaqv3uvo");
 
 $dblink= mysqli_connect(mysql_host, mysql_user, mysql_password,myDB);
 
