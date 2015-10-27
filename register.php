@@ -50,10 +50,14 @@ class Register implements ResponseProcess{
         $no_of_rows1 = mysqli_num_rows($result1);
         $no_of_rows2 = mysqli_num_rows($result2);
 
-        if ($no_of_rows1 == 1)
-            $output["flag"]="user already exists";   //user already exists
-        else if ($no_of_rows2 == 1)
-            $output["flag"]="mobile already exists";   //mobile already registered
+        if ($no_of_rows1 == 1) {
+            $output["usercheck"] = "user already exists";       //user already exists
+            $output["flag"] = "wrong input";
+            }
+        else if ($no_of_rows2 == 1){
+            $output["mobilecheck"] = "mobile already exists";   //mobile already registered
+            $output["flag"] = "wrong input";
+            }
         else
         {
             $userStatus = 0;
@@ -66,8 +70,10 @@ class Register implements ResponseProcess{
                 $output["query"]="error";
                 $output["error_msg"] = $insertResult;
                 print(json_encode($output));
-            }else
-            $output["flag"]="succeed";
+            }else {
+                $output["flag"]="succeed";
+                $output["usecase"]="register";
+            }
         }
 
         return json_encode($output);

@@ -99,8 +99,10 @@ class Register implements ResponseProcess{
                 $output["query"]="error";
                 $output["error_msg"] = $updateResult;
                 print(json_encode($output));}
-        else
-                $output["flag"]="succeed";
+        else {
+            $output["flag"]="succeed";
+            $output["usecase"] = "update";
+        }
 
         return json_encode($output);
     }
