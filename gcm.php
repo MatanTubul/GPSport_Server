@@ -16,18 +16,18 @@ class GCM {
      */
     public function send_notification($registatoin_ids, $message) {
         // include config
-        include_once './config.php';
+        include_once 'connection.php';
 
         // Set POST variables
         $url = 'https://android.googleapis.com/gcm/send';
 
         $fields = array(
             'registration_ids' => $registatoin_ids,
-            'data' => $message,
+            'data'             => array("message" => $message),
         );
 
         $headers = array(
-            'Authorization: key=' . GOOGLE_API_KEY,
+            'Authorization: key=' .GOOGLE_API_KEY,
             'Content-Type: application/json'
         );
         // Open connection
@@ -35,7 +35,7 @@ class GCM {
 
         // Set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $url);
-
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -55,9 +55,5 @@ class GCM {
         curl_close($ch);
         echo $result;
     }
-
 }
-
 ?>
-
-}
