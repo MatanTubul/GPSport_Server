@@ -16,6 +16,7 @@ class Register implements ResponseProcess{
         $birth = $_POST['birthyear'];
         $gen = $_POST['gender'];
         $pic = $_POST['picture'];
+        $gcm_id = $_POST["regid"];
         $passFunc = new PasswordFunctions();
         $salt = $passFunc->random_password();
         $pass = $passFunc->encrypt($pass, $salt);
@@ -50,8 +51,8 @@ class Register implements ResponseProcess{
             $userStatus = 0;
             //user registered
             //insert user details to DB
-            $insertResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, salt, userstatus, image,mobile) VALUES
-               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob')") or die((mysqli_error($dblink)));
+            $insertResult=mysqli_query($dblink,"INSERT INTO users (name, email, gender, age, password, salt, userstatus, image,mobile,gcm_id) VALUES
+               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob','$gcm_id')") or die((mysqli_error($dblink)));
             if(!$insertResult)
             {
                 $output["query"]="error";
