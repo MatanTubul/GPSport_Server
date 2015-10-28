@@ -6,6 +6,7 @@
  * Time: 2:56 PM
  */
 include 'response_process.php';
+include 'gcm.php';
 
 
 class CreateEvent implements ResponseProcess {
@@ -27,6 +28,8 @@ class CreateEvent implements ResponseProcess {
         $gen = $_POST["gender"];
         $min_age = $_POST["minAge"];
         $manager = $_POST["manager"];
+
+
 
         $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
                 AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time') OR (event.end_time BETWEEN '$s_time' AND '$e_time'))";
@@ -79,8 +82,9 @@ class CreateEvent implements ResponseProcess {
                                 $json = $_POST["jsoninvited"];
                                 $json = json_decode($json);
                                 $output["size_invited"] = count($json);
-                                $query_users = "SELECT id From users WHERE ";
+                                $query_users = "SELECT id,gcm_id From users WHERE ";
                                 $i=0;
+
                                 $size_of_param = (count($json));
                                 foreach($json as $user) {
                                     if ($i < $size_of_param - 1)
@@ -106,8 +110,10 @@ class CreateEvent implements ResponseProcess {
                                 $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
                                 $i=0;
                                 $status = "deny";
+                               $registration_ids = array();
                                 while($row_user = mysqli_fetch_assoc($event_user_s_res))
                                 {
+                                    $registration_ids[$i]=$row_user["gcm_id"];
                                     if($i<$size_of_param - 1)
                                         $insert_query .= "('" .$event_id. "','" .$row_user["id"]. "','" .$status. "'), ";
                                     else
@@ -118,23 +124,29 @@ class CreateEvent implements ResponseProcess {
                                 if(!$insert_query_res)
                                 {
                                     $output["flag"] = "failed";
-                                    $output["msg"] = "failed to inserrt to attending table";
+                                    $output["msg"] = "failed to insert to attending table";
                                 }else{
                                     $output["id_query"]= $insert_query;
+                                    $output["registred_ids"] = $registration_ids;
                                     $output["msg"] = "success to insert into attending";
-                                }
-                            }
+                                    $gcm = new GCM();
+                                    $message = "You have just invited to play '".$sport."'";
+                                    $output["gcm_message"]=$message;
+                                    $gcm_res = $gcm->send_notification($registration_ids,$message);
+                                    $output["gcm_res"] = $gcm_res;
+
+                                } //els of $insert_query_res
+                            } //else of  $no_of_rows > 1 || $no_of_rows == 0
 
 
-                        }
-                    }
+                        } // else  of $event_s_res
+                    } //if isset($_POST["invitedUsers"]
 
-                }
+                } // if $result
 
 
-            }
+            } // if $no_of_rows < 1
             else {
-
                 $output["flag"] = "failed";
                 $output["msg"] = "Place is already occupied in this time";
             }
