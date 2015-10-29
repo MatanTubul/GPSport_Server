@@ -14,7 +14,7 @@ class GCM {
     /**
      * Sending Push Notification
      */
-    public function send_notification($registatoin_ids, $message) {
+    public function send_notification($registatoin_ids, $data) {
         // include config
         include_once 'connection.php';
 
@@ -23,7 +23,7 @@ class GCM {
 
         $fields = array(
             'registration_ids' => $registatoin_ids,
-            'data'             => array("message" => $message),
+            'data'=> $data,
         );
 
         $headers = array(
@@ -53,7 +53,7 @@ class GCM {
 
         // Close connection
         curl_close($ch);
-        echo $result;
+        return $result;
     }
 }
 ?>

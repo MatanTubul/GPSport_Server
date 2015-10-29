@@ -130,9 +130,11 @@ class CreateEvent implements ResponseProcess {
                                     $output["registred_ids"] = $registration_ids;
                                     $output["msg"] = "success to insert into attending";
                                     $gcm = new GCM();
-                                    $message = "You have just invited to play '".$sport."'";
-                                    $output["gcm_message"]=$message;
-                                    $gcm_res = $gcm->send_notification($registration_ids,$message);
+                                    $data = array();
+                                    $message = "You have just invited to play ".$sport;
+                                    $data['message'] = $message;
+                                    $output["gcm_message"]=$data;
+                                    $gcm_res = $gcm->send_notification($registration_ids,$data);
                                     $output["gcm_res"] = $gcm_res;
 
                                 } //els of $insert_query_res
