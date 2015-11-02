@@ -27,7 +27,7 @@ class UpdateProfile implements ResponseProcess{
 
     public function dataProcess($dblink) {
         $name = $_POST['firstname'];
-        $gcm_id = $_POST["regid"];
+        $gcm_id = $_POST['regid'];
         $prevEmail = $_POST['prevemail'];
         $newEmail = $_POST['newemail'];
         $pass = ($_POST['password']);
@@ -91,8 +91,9 @@ class UpdateProfile implements ResponseProcess{
         file_put_contents($filePath,base64_decode($pic));
 
         //update user details to DB
-        $updateResult=mysqli_query($dblink,"UPDATE users SET (name, email, gender, age, password, salt, image,mobile,gcm_id) VALUES
-        ('$name', '$newEmail', '$gen', '$birth', '$pass','$salt','$imageName','$newMob','$gcm_id') WHERE users.email='$prevEmail'") or die((mysqli_error($dblink)));
+        $updateResult=mysqli_query($dblink,"UPDATE users SET fname = '$name', email = '$newEmail', gender = '$gen',
+        age = '$birth', password = '$pass', salt = '$salt', image = '$imageName', mobile = '$newMob', gcm_id = '$gcm_id'
+        WHERE users.email = '$prevEmail' ") or die((mysqli_error($dblink)));
 
         if(!$updateResult)
             {

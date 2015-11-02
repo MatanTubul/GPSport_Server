@@ -30,7 +30,7 @@ class GetProfile implements ResponseProcess{
         $pass = $passFunc->decrypt($row["password"],$row["salt"]);
         $output["password"] = $pass;
 
-        $output["name"] =  $row["name"];
+        $output["name"] =  $row["fname"];
         $output["email"] =  $row["email"];
         $output["gender"] =  $row["gender"];
         $output["age"] =  $row["age"];

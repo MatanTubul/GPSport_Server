@@ -44,7 +44,7 @@ class Login implements ResponseProcess{
                 else
                 {
                     $output["flag"]="verified";          //user can login
-                    $output["name"]=$row["name"];
+                    $output["name"]=$row["fname"];
                     $output["mobile"] =$row["mobile"];
                     $output["user_id"] = $row["id"];
                     mysqli_query($dblink,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'");

@@ -14,7 +14,7 @@ class SearchUser implements ResponseProcess{
         $output = array();
         $name = $_POST["name"];
         $output["flag"]="user found";
-        $query = "SELECT * FROM users WHERE users.name LIKE '$name%'";
+        $query = "SELECT * FROM users WHERE users.fname LIKE '$name%'";
 
         $result = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
 
@@ -34,7 +34,7 @@ class SearchUser implements ResponseProcess{
                     $img_path = "images/".$row["image"];
 
                     $imgdata = base64_encode(file_get_contents($img_path));
-                    $output["users"][] =  array("name"=> $row["name"],"email"=> $row["email"],"mobile" => $row["mobile"],"image" => $imgdata);
+                    $output["users"][] =  array("name"=> $row["fname"],"email"=> $row["email"],"mobile" => $row["mobile"],"image" => $imgdata);
                 }
 
 
