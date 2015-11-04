@@ -29,6 +29,7 @@ class CreateEvent implements ResponseProcess {
         $min_age = $_POST["minAge"];
         $manager = $_POST["manager"];
         $mng_name = $_POST["manager_name"];
+        $place = $_POST["address"];
 
 
 
@@ -132,13 +133,14 @@ class CreateEvent implements ResponseProcess {
                                     $output["msg"] = "success to insert into attending";
                                     $gcm = new GCM();
                                     $data = array();
-                                    $message = " ,invited you to play ".$sport.",please click on Join in order to add you into the event";
+                                    $message = " ,invited you to play ".$sport.",please click on Join in order to add you into the event.";
                                     $data['message'] = $message;
                                     $data['date'] = $date;
                                     $data['start_time'] = $s_time;
                                     $data['end_time'] = $e_time;
                                     $data['inviter'] = $mng_name;
                                     $data['event_id'] = $event_id;
+                                    $data['location'] = $place;
                                     $output["gcm_message"]=$data;
                                     $gcm_res = $gcm->send_notification($registration_ids,$data);
                                     $output["gcm_res"] = $gcm_res;

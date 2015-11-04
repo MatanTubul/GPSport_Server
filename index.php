@@ -68,7 +68,13 @@ switch ($tag){
     case "search_user": {
         include 'search_user.php';
         $users = new SearchUser();
-        echo($users ->dataProcess($dblink));
+        echo($users->dataProcess($dblink));
+        break;
+    }
+    case "response_invited_user": {
+        include_once 'invited_user.php';
+        $invited_user = new invited_user();
+        echo($invited_user ->dataProcess($dblink));
         break;
     }
 
