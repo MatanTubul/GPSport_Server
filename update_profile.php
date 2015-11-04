@@ -77,18 +77,18 @@ class UpdateProfile implements ResponseProcess{
         $salt = $passFunc->random_password();
         $pass = $passFunc->encrypt($pass, $salt);
 
+
         $imageName = $prevMob.".jpg";
-        $filePath = "images/".$imageName;
-        if(file_exists($filePath))
-        {
-            unlink($filePath); // delete the old file
-        }
+        $oldFilePath = "images/".$imageName;
+        unlink(realpath($oldFilePath)); // delete the old file
+
 
         $imageName = $newMob.".jpg";
-        $filePath = "images/".$imageName;
+        $newFilePath = "images/".$imageName;
+
         //create a new empty file
-        $myfile =  fopen($filePath,"w") or die("Unable to open file!");
-        file_put_contents($filePath,base64_decode($pic));
+        $myfile =  fopen($newFilePath,"w") or die("Unable to open file!");
+        file_put_contents($newFilePath,base64_decode($pic));
 
         //update user details to DB
         $updateResult=mysqli_query($dblink,"UPDATE users SET fname = '$name', email = '$newEmail', gender = '$gen',
