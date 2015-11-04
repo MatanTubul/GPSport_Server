@@ -138,6 +138,7 @@ class CreateEvent implements ResponseProcess {
                                     $data['start_time'] = $s_time;
                                     $data['end_time'] = $e_time;
                                     $data['inviter'] = $mng_name;
+                                    $data['event_id'] = $event_id;
                                     $output["gcm_message"]=$data;
                                     $gcm_res = $gcm->send_notification($registration_ids,$data);
                                     $output["gcm_res"] = $gcm_res;
