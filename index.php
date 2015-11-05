@@ -53,18 +53,12 @@ switch ($tag){
     }
 
     case "profile": {
-        if ($_POST["method"]== "getprofile")
-        {
-            include 'get_profile.php';
-            $profile = new GetProfile();
-        }
-        else {
-            include 'update_profile.php';
-            $profile = new UpdateProfile();
-        }
+        include 'update_profile.php';
+        $profile = new UpdateProfile();
         echo($profile ->dataProcess($dblink));
         break;
     }
+
     case "search_user": {
         include 'search_user.php';
         $users = new SearchUser();
