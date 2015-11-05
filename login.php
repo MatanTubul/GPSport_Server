@@ -44,9 +44,28 @@ class Login implements ResponseProcess{
                 else
                 {
                     $output["flag"]="verified";          //user can login
-                    $output["name"]=$row["fname"];
-                    $output["mobile"] =$row["mobile"];
+
+                    $passFunc = new PasswordFunctions();
+                    $pass = $passFunc->decrypt($row["password"],$row["salt"]);
+                    $output["password"] = $pass;
+
+                    $output["name"] =  $row["fname"];
+                    $output["gender"] =  $row["gender"];
+                    $output["age"] =  $row["age"];
+                    $output["mobile"] =  $row["mobile"];
                     $output["user_id"] = $row["id"];
+                    $output["gcm_id"] = $row["gcm_id"];
+
+                    $imageName = $row["image"];
+                    $filePath = "images/".$imageName;
+                    if (file_exists($filePath)) {
+                        $image = base64_encode(file_get_contents($filePath));
+                    }
+                    else{
+                        $image = "nofile";
+                    }
+                    $output["image"] =  $image;
+
                     mysqli_query($dblink,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'");
                 }
         }
