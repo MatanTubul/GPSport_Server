@@ -64,7 +64,7 @@ class CreateEvent implements ResponseProcess {
                 else{
 
                     if(isset($_POST["invitedUsers"])){
-                        $query_id = "SELECT id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
+                        $query_id = "SELECT event_id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
                         $event_s_res = mysqli_query($dblink,$query_id) or die (mysqli_error($dblink));
                         if(!$event_s_res)
                         {
@@ -80,7 +80,7 @@ class CreateEvent implements ResponseProcess {
                                 $output["msg"] = "Event id not found";
                             }
                             else{
-                                $event_id = $row["id"];
+                                $event_id = $row["event_id"];
                                 $json = $_POST["jsoninvited"];
                                 $json = json_decode($json);
                                 $output["size_invited"] = count($json);

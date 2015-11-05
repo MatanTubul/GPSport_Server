@@ -29,11 +29,18 @@ class invited_user implements ResponseProcess {
             $output["flag"]= "update_failed";
             $output["msg"] = $result_q;
             $output["affected row"] = $affected_row;
-            return json_encode($output);
+
         }else{
             $output["flag"]= "updated";
             $output["msg"] = $result_q;
             $output["affected row"] = $affected_row;
+            $event_query = "UPDATE event SET event.current_participants = event.current_participants+1 WHERE event.event_id = '$event_id' and (event.max_participants > event.current_participants)";
+            $result_e_q  = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));
+            if(!$result_e_q){
+                $output["flag"]= "update_failed";
+                $output["msg"] = "failed to update event table";
+                $output["query_res"] = $result_e_q;
+            }
 
         }
         return json_encode($output);
