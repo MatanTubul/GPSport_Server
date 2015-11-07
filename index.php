@@ -78,6 +78,13 @@ switch ($tag){
         echo($getEvent -> dataProcess($dblink));
         break;
     }
+    case "delete_event":
+    {
+        include_once 'delete_event.php';
+        $dlevent = new delete_event();
+        echo($dlevent -> dataProcess($dblink));
+        break;
+    }
 
 //case others...
 }
