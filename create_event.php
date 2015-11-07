@@ -54,8 +54,8 @@ class CreateEvent implements ResponseProcess {
                 $output["flag"] = "success";
                 $output["msg"] = "insert event";
 
-                $result = mysqli_query($dblink, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,longtitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
-             VALUES ('$manager','$sport','$date','$s_time','$e_time','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($dblink));
+                $result = mysqli_query($dblink, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,address,longtitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
+             VALUES ('$manager','$sport','$date','$s_time','$e_time','$place','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($dblink));
                 if (!$result) {
                     $output["flag"] = "failed to create event";
                     // return (json_encode($output));

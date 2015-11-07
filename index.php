@@ -71,6 +71,13 @@ switch ($tag){
         echo($invited_user ->dataProcess($dblink));
         break;
     }
+    case "get_event":
+    {
+        include_once 'get_events.php';
+        $getEvent = new get_events();
+        echo($getEvent -> dataProcess($dblink));
+        break;
+    }
 
 //case others...
 }
