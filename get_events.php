@@ -15,7 +15,7 @@ class get_events implements ResponseProcess{
         $output = array();
         $mng_id = $_POST["manager_id"];
 
-        $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id'";
+        $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' and event.event_status = '1'";
         $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));
         if(!$result_q) {
             $output["flag"] = "failed";
@@ -28,6 +28,7 @@ class get_events implements ResponseProcess{
             {
                 $events[] = $row;
             }
+            $output["events"] = $events;
         }
         return json_encode($output);
     }
