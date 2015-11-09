@@ -21,7 +21,7 @@ class DBFunctions {
         return $result;
     }
     //check event
-    function  checkIfEventAvailable($lon,$lat,$date,$s_time,$e_time){
+    function  checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time){
         $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
                 AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time')
                 OR (event.end_time BETWEEN '$s_time' AND '$e_time'))";
