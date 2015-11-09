@@ -8,6 +8,7 @@
 
 include 'response_process.php';
 require_once 'PasswordFunctions.php';
+require_once 'DBFunctions.php';
 
 class ForgotPassword implements ResponseProcess{
 
@@ -15,9 +16,10 @@ class ForgotPassword implements ResponseProcess{
 
         $email = isset($_POST['email']);
         $output = array();
+        $dbF = new DBFunctions($dblink);
         $passFunc = new PasswordFunctions();
-
-        $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email='$email'");
+        $result = $dbF ->getUserByEmail($email);
+        //$result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email='$email'");
 
         if(!$result){
             $output["dblink"]= $dblink;
@@ -28,8 +30,10 @@ class ForgotPassword implements ResponseProcess{
 
         $no_of_rows = mysqli_num_rows($result);
 
-        if ($no_of_rows < 1)
-            $output["flag"]="user not found";   //user not found
+        if ($no_of_rows < 1) {
+            $output["flag"] = "user not found";   //user not found
+            $output["result"] = $result;
+        }
         else {
             $row = mysqli_fetch_assoc($result);
             $output["flag"] = "recovered";  //password recovered

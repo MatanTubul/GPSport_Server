@@ -16,7 +16,7 @@ class DBFunctions {
         $this ->con = $dblink;
     }
     //forgot password,login,register,update profile
-    function getUserByEmail($con,$email){
+    function getUserByEmail($email){
         $result = mysqli_query($this ->con,"SELECT * FROM users WHERE users.email='$email'");
         return $result;
     }

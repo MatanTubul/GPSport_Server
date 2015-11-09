@@ -8,6 +8,7 @@
 
 include 'response_process.php';
 require_once 'PasswordFunctions.php';
+require_once 'DBFunctions.php';
 
 class Login implements ResponseProcess{
 
@@ -16,10 +17,12 @@ class Login implements ResponseProcess{
         $user = $_POST['username'];
         $pass = ($_POST['password']);
         $output = array();
+        $dbF = new DBFunctions($dblink);
 
         $passFunc = new PasswordFunctions();
 
-        $result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$user'");
+        //$result = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$user'");
+        $result = $dbF -> getUserByEmail($user);
 
         if(!$result){
             $output["error_msg"] = "query failed";
@@ -66,7 +69,8 @@ class Login implements ResponseProcess{
                     }
                     $output["image"] =  $image;
 
-                    mysqli_query($dblink,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'");
+                    //mysqli_query($dblink,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'");
+                    $result = $dbF ->UpdateUserStatus($user);
                 }
         }
         return json_encode($output);

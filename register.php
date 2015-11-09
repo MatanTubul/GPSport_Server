@@ -7,6 +7,7 @@
  */
 include 'response_process.php';
 require_once 'PasswordFunctions.php';
+require_once 'DBFunctions.php';
 class Register implements ResponseProcess{
     public function dataProcess($dblink) {
         $name = $_POST['firstname'];
@@ -18,6 +19,7 @@ class Register implements ResponseProcess{
         $pic = $_POST['picture'];
         $gcm_id = $_POST['regid'];
         $passFunc = new PasswordFunctions();
+        $dbF = new DBFunctions($dblink);
         $salt = $passFunc->random_password();
         $pass = $passFunc->encrypt($pass, $salt);
         $imageName = $mob.".jpg";
@@ -30,8 +32,13 @@ class Register implements ResponseProcess{
         $myfile =  fopen($filePath,"w") or die("uUnable to open file!");
         file_put_contents($filePath,base64_decode($pic));
         $output = array();
-        $result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$email'");
-        $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");
+
+        $result1 = $dbF ->getUserByEmail($email);
+        $result2 = $dbF -> getUserByMobile($mob);
+
+       /*$result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$email'");
+        $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");*/
+
         if((!$result1) || (!$result2)){
             $output["error_msg"] = "signup query failed";
             print(json_encode($output));
@@ -51,8 +58,10 @@ class Register implements ResponseProcess{
             $userStatus = 0;
             //user registered
             //insert user details to DB
-            $insertResult=mysqli_query($dblink,"INSERT INTO users (fname, email, gender, age, password, salt, userstatus, image,mobile,gcm_id) VALUES
-               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob','$gcm_id')") or die((mysqli_error($dblink)));
+           /* $insertResult=mysqli_query($dblink,"INSERT INTO users (fname, email, gender, age, password, salt, userstatus, image,mobile,gcm_id) VALUES
+               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob','$gcm_id')") or die((mysqli_error($dblink)));*/
+            $insertResult = $dbF -> InsertUserIntoDB($name,$email,$gen,$birth,$pass,$salt,$userStatus,$imageName,$mob,$gcm_id);
+
             if(!$insertResult)
             {
                 $output["query"]="error";

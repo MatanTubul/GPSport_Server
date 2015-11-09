@@ -6,6 +6,7 @@
  * Time: 11:29 AM
  */
 include 'response_process.php';
+require_once 'DBFunctions.php';
 class SearchUser implements ResponseProcess{
 
     public function dataProcess($dblink)
@@ -13,8 +14,10 @@ class SearchUser implements ResponseProcess{
         $output = array();
         $name = $_POST["name"];
         $output["flag"]="user found";
-        $query = "SELECT * FROM users WHERE users.fname LIKE '$name%'";
-        $result = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
+        $dbF = new DBFunctions($dblink);
+        $result = $dbF -> SearchUserByName($name);
+       /* $query = "SELECT * FROM users WHERE users.fname LIKE '$name%'";
+        $result = mysqli_query($dblink,$query) or die (mysqli_error($dblink));*/
 
         if(!$result){
             $output["flag"] = "query failed";
