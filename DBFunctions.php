@@ -15,11 +15,13 @@ class DBFunctions {
     function __construct($dblink){
         $this ->con = $dblink;
     }
-    //forgot password
+    //forgot password,login,register,update profile
     function getUserByEmail($con,$email){
         $result = mysqli_query($this ->con,"SELECT * FROM users WHERE users.email='$email'");
         return $result;
     }
+    //forgot password,login,register,update profile
+
     //check event
     function  checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time){
         $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
@@ -136,5 +138,46 @@ class DBFunctions {
 
     //invited_users
 
+    //login
+        function UpdateUserStatus($user){
+            $result = mysqli_query($this->con,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'")
+            or die((mysqli_error($this->con)));
+            return $result;
+        }
+    //login
+
+    //register
+    function getUserByMobile($mob){
+        $result2 = mysqli_query($this->con,"SELECT * FROM users WHERE users.mobile= '$mob'")
+        or die((mysqli_error($this->con)));
+        return $result2;
+    }
+
+    function InsertUserIntoDB($name,$email,$gen,$birth,$pass,$salt,$userStatus,$imageName,$mob,$gcm_id){
+        $insertResult=mysqli_query($this->con,"INSERT INTO users (fname, email, gender, age, password, salt, userstatus, image,mobile,gcm_id) VALUES
+               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob','$gcm_id')") or die((mysqli_error($this->con)));
+        return $insertResult;
+    }
+
+    //register
+
+    //search user
+    function SearchUserByName($name){
+        $query = "SELECT * FROM users WHERE users.fname LIKE '$name%'";
+        $result = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
+        return $result;
+    }
+    //search user
+
+    //Update Profile
+
+    function UpdateProfile($name,$newEmail,$gen,$birth,$pass,$salt,$imageName,$newMob,$gcm_id,$prevEmail){
+        $updateResult = mysqli_query($this->con,"UPDATE users SET fname = '$name', email = '$newEmail', gender = '$gen',
+        age = '$birth', password = '$pass', salt = '$salt', image = '$imageName', mobile = '$newMob', gcm_id = '$gcm_id'
+        WHERE users.email = '$prevEmail' ") or die((mysqli_error($this->con)));
+
+        return $updateResult;
+    }
+    //Update Profile
 
 }

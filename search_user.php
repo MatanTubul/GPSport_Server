@@ -8,14 +8,12 @@
 include 'response_process.php';
 class SearchUser implements ResponseProcess{
 
-
     public function dataProcess($dblink)
     {
         $output = array();
         $name = $_POST["name"];
         $output["flag"]="user found";
         $query = "SELECT * FROM users WHERE users.fname LIKE '$name%'";
-
         $result = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
 
         if(!$result){
@@ -36,14 +34,8 @@ class SearchUser implements ResponseProcess{
                     $imgdata = base64_encode(file_get_contents($img_path));
                     $output["users"][] =  array("name"=> $row["fname"],"email"=> $row["email"],"mobile" => $row["mobile"],"image" => $imgdata);
                 }
-
-
             }
-
-
-
         }
-
         echo json_encode($output);
 
     }
