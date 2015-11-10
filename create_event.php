@@ -7,6 +7,7 @@
  */
 include 'response_process.php';
 include 'gcm.php';
+require_once 'DBFunctions.php';
 
 
 class CreateEvent implements ResponseProcess {
@@ -16,6 +17,8 @@ class CreateEvent implements ResponseProcess {
     public function dataProcess($dblink)
     {
         $output = array();
+        $dbF = new DBFunctions($dblink);
+
         $sport = $_POST["sport_type"];
         $date = date("Y-m-d",strtotime(str_replace('/','-',$_POST["date"])));
         $s_time =$_POST["s_time"];
@@ -32,15 +35,15 @@ class CreateEvent implements ResponseProcess {
         $place = $_POST["address"];
 
 
-
-        $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
+        $result_q = $dbF ->checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time);
+        /*$query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
                 AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time') OR (event.end_time BETWEEN '$s_time' AND '$e_time'))";
 
         //AND (event.start_time = '$s_time' AND event.end_time = '$e_time')
 
 
         //check time and place of the event
-        $result_q = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
+        $result_q = mysqli_query($dblink,$query) or die (mysqli_error($dblink));*/
         if(!$result_q)
         {
             $output["flag"]= "select failed";
@@ -54,8 +57,10 @@ class CreateEvent implements ResponseProcess {
                 $output["flag"] = "success";
                 $output["msg"] = "insert event";
 
-                $result = mysqli_query($dblink, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,address,longtitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
-             VALUES ('$manager','$sport','$date','$s_time','$e_time','$place','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($dblink));
+                $result = $dbF -> InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched);
+
+                /*$result = mysqli_query($dblink, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,address,longtitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
+             VALUES ('$manager','$sport','$date','$s_time','$e_time','$place','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($dblink));*/
                 if (!$result) {
                     $output["flag"] = "failed to create event";
                     // return (json_encode($output));
@@ -64,8 +69,10 @@ class CreateEvent implements ResponseProcess {
                 else{
 
                     if(isset($_POST["invitedUsers"])){
-                        $query_id = "SELECT event_id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
-                        $event_s_res = mysqli_query($dblink,$query_id) or die (mysqli_error($dblink));
+
+                        $event_s_res = $dbF ->getEventIdByDateAndTime($date,$s_time,$e_time);
+                        /*$query_id = "SELECT event_id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
+                        $event_s_res = mysqli_query($dblink,$query_id) or die (mysqli_error($dblink));*/
                         if(!$event_s_res)
                         {
                             $output["flag"] = "failed";
@@ -84,10 +91,12 @@ class CreateEvent implements ResponseProcess {
                                 $json = $_POST["jsoninvited"];
                                 $json = json_decode($json);
                                 $output["size_invited"] = count($json);
-                                $query_users = "SELECT id,gcm_id From users WHERE ";
+                                $size_of_param = (count($json));
+                                $event_user_s_res = $dbF -> getUserIdAndRegId($json,$size_of_param);
+                                /*$query_users = "SELECT id,gcm_id From users WHERE ";
                                 $i=0;
 
-                                $size_of_param = (count($json));
+
                                 foreach($json as $user) {
                                     if ($i < $size_of_param - 1)
                                         // add a space at end of this string
@@ -102,14 +111,21 @@ class CreateEvent implements ResponseProcess {
                                 }
                                 $output["user_query"]= $query_users;
 
-                                $event_user_s_res = mysqli_query($dblink,$query_users) or die (mysqli_error($dblink));
+                                $event_user_s_res = mysqli_query($dblink,$query_users) or die (mysqli_error($dblink));*/
                                 if(!$event_user_s_res)
                                 {
                                     $output["flag"] = "failed";
                                     $output["msg"] = "user id not found";
                                 }
 
-                                $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
+                                    $result = $dbF->insertIntoAttendingTable($event_user_s_res, $event_id, $size_of_param);
+                                    $insert_query_res = $result["res"];
+                                    $output["query"] = $result["query"];
+                                    $registration_ids = $result["reg_ids"];
+
+
+
+                                /*$insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
                                 $i=0;
                                 $status = "deny";
                                $registration_ids = array();
@@ -122,13 +138,14 @@ class CreateEvent implements ResponseProcess {
                                         $insert_query .= "('".$event_id."','".$row_user["id"]."','".$status."') ";
                                     $i++;
                                 }
-                                $insert_query_res = mysqli_query($dblink,$insert_query) or die (mysqli_error($dblink));
+                                $insert_query_res = mysqli_query($dblink,$insert_query) or die (mysqli_error($dblink));*/
                                 if(!$insert_query_res)
                                 {
                                     $output["flag"] = "failed";
                                     $output["msg"] = "failed to insert to attending table";
-                                }else{
-                                    $output["id_query"]= $insert_query;
+                                }
+                            else{
+
                                     $output["registred_ids"] = $registration_ids;
                                     $output["msg"] = "success to insert into attending";
                                     $gcm = new GCM();

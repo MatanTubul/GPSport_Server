@@ -12,8 +12,11 @@ include_once 'connection.php';
 class DBFunctions {
 
     private $con;
+
+
     function __construct($dblink){
         $this ->con = $dblink;
+
     }
     //forgot password,login,register,update profile
     function getUserByEmail($email){
@@ -22,7 +25,7 @@ class DBFunctions {
     }
     //forgot password,login,register,update profile
 
-    //check event
+    //create event
     function  checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time){
         $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
                 AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time')
@@ -44,11 +47,9 @@ class DBFunctions {
         return $event_s_res;
     }
 
-    function  getUserIdAndRegId($json){
+    function  getUserIdAndRegId($json,$size_of_param){
         $query_users = "SELECT id,gcm_id From users WHERE ";
         $i=0;
-
-        $size_of_param = (count($json));
         foreach($json as $user) {
             if ($i < $size_of_param - 1)
                 // add a space at end of this string
@@ -70,38 +71,40 @@ class DBFunctions {
         $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
         $i=0;
         $status = "deny";
+        $insert_query_res = array();
         $registration_ids = array();
         while($row_user = mysqli_fetch_assoc($event_user_s_res))
         {
-            $registration_ids[$i]=$row_user["gcm_id"];
+            $registration_ids[$i]= $row_user["gcm_id"];
             if($i<$size_of_param - 1)
                 $insert_query .= "('" .$event_id. "','" .$row_user["id"]. "','" .$status. "'), ";
             else
                 $insert_query .= "('".$event_id."','".$row_user["id"]."','".$status."') ";
             $i++;
         }
-        $insert_query_res = mysqli_query($this->con,$insert_query) or die (mysqli_error($this->con));
-        return $insert_query_res;
+        $insert_query_res["query"]=$insert_query;
+        $insert_query_res["res"] = mysqli_query($this->con,$insert_query) or die (mysqli_error($this->con));
+        $insert_query_res["reg_ids"] = $registration_ids;
+        return ($insert_query_res);
     }
-    //check event
+    //create event
 
 
     //delete event
-    function  getEventByEventId($event_id){
+    function  getEventByEventIdFromAttending($event_id){
         $attending_query = "SELECT * from attending WHERE attending.event_id = '$event_id'";
-        $result_q = mysqli_query($this -> con,$attending_query) or die (mysqli_error($this->con));
+        $result_q = mysqli_query($this->con,$attending_query) or die (mysqli_error($this->con));
         return $result_q;
     }
 
     function UpdateEventManagerId($user_id,$event_id){
-        $event_query = "UPDATE event SET event.manager_id = '$user_id',event.current_participants = event.current_participants - 1
-                        WHERE event.event_id = '$event_id'";
+        $event_query = "UPDATE event SET event.manager_id = '$user_id',event.current_participants = event.current_participants - 1 WHERE event.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
 
     function DeleteFromAttending($event_id,$user_id){
-        $del_query = "DELETE from attending WHERE attending.event_id = '$event_id' and attending.user_id = '$user_id'";
+        $del_query = "DELETE from attending WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'";
         $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -115,8 +118,8 @@ class DBFunctions {
 
     //get_event
     function getEventsManagedById($mng_id){
-        $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' and event.event_status = '1'";
-        $result_q = mysqli_query($this ->con,$event_query) or die (mysqli_error($this->con));
+        $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' AND event.event_status = '1'";
+        $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
 
@@ -129,9 +132,7 @@ class DBFunctions {
     }
 
     function UpdateCurrentParticipants($event_id){
-        $event_query = "UPDATE event SET event.current_participants = event.current_participants+1
-                        WHERE event.event_id = '$event_id'
-                        AND (event.max_participants > event.current_participants)";
+        $event_query = "UPDATE event SET event.current_participants = event.current_participants+1 WHERE event.event_id = '$event_id' AND (event.max_participants > event.current_participants)";
         $result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_e_q;
     }
