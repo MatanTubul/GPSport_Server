@@ -181,4 +181,14 @@ class DBFunctions {
     }
     //Update Profile
 
+    //Update Event
+    function UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched)
+    {
+        $result = mysqli_query($this->con, "UPDATE event SET kind_of_sport = '$sport',event_date = '$date',start_time ='$s_time'
+        ,end_time = '$e_time',address ='$place',longtitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
+        max_participants = '$max_p',scheduled = '$sched'
+        WHERE event.event_id = '$event_id' AND DATE('$date') < DATE (NOW())") or die (mysqli_error($this->con));
+        return $result;
+    }
+    //Update Event
 }
