@@ -36,20 +36,23 @@ class CreateEvent implements ResponseProcess {
         $mode = $_POST["mode"];
 
 
-        if($mode == "update"){
+        if($mode == "edit"){
             $event_id = $_POST["event_id"];
             $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched);
+            $affected_row = mysqli_affected_rows($dblink);
             if(!$result_q)
             {
                 $output["flag"]= "update_failed";
                 $output["query_res"] = $result_q;
                 $output["msg"] = "failed to update event";
+                $output["affected row"] = $affected_row;
 
             }
             else{
                 $output["flag"]= "update_success";
                 $output["query_res"] = $result_q;
                 $output["msg"] = "success to update event";
+                $output["affected row"] = $affected_row;
             }
         }
         else{
