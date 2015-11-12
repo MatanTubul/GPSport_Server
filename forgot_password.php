@@ -14,7 +14,7 @@ class ForgotPassword implements ResponseProcess{
 
     public function dataProcess($dblink) {
 
-        $email = isset($_POST['email']);
+        $email = $_POST['email'];
         $output = array();
         $dbF = new DBFunctions($dblink);
         $passFunc = new PasswordFunctions();
@@ -29,6 +29,7 @@ class ForgotPassword implements ResponseProcess{
         }
 
         $no_of_rows = mysqli_num_rows($result);
+
 
         if ($no_of_rows < 1) {
             $output["flag"] = "user not found";   //user not found

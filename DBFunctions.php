@@ -20,7 +20,8 @@ class DBFunctions {
     }
     //forgot password,login,register,update profile
     function getUserByEmail($email){
-        $result = mysqli_query($this ->con,"SELECT * FROM users WHERE users.email='$email'");
+        $result = mysqli_query($this ->con,"SELECT * FROM users WHERE users.email='$email'")
+        or die (mysqli_error($this->con));
         return $result;
     }
     //forgot password,login,register,update profile
