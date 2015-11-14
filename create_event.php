@@ -54,6 +54,33 @@ class CreateEvent implements ResponseProcess {
                 $output["msg"] = "success to update event";
                 $output["affected row"] = $affected_row;
             }
+            if(isset($_POST["invitedUsers"])){
+                $result_q = $dbF -> DeleteEventFromAttending($event_id);
+                if(!$result_q)
+                {
+                    $output["flag"]= "delete failed";
+                    $output["msg"] = $result_q;
+                    return json_encode($output);
+                }else{
+                    $participants = $_POST["invitedUsers"];
+                    $json_uesr = json_decode($participants);
+                    $ids = array();
+                    foreach($json_uesr as $user)
+                    {
+                        $ids[] = $user["id"];
+                    }
+                    $result_q = $dbF -> insertIntoAttendingTable($ids,$event_id,count($ids));
+                    if(!$result_q)
+                    {
+                        $output["flag"]= "update_insert failed";
+                        $output["msg"] = $result_q;
+                        return json_encode($output);
+                    }else{
+                        $output["flag"]= "update_success";
+                        $output["msg"] = $result_q;
+                    }
+                }
+            }
         }
         else{
 

@@ -24,6 +24,29 @@ class DBFunctions {
         or die (mysqli_error($this->con));
         return $result;
     }
+    function getUserIDByEvent($event_id){
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id'")
+        or die (mysqli_error($this->con));
+        return $result;
+    }
+    function getUserSByIds($user_ids,$size){
+        $query_users = "SELECT * From users WHERE ";
+        $i=0;
+        foreach($user_ids as $id) {
+            if ($i < $size - 1)
+                $query_users .= "users.id = '".$id."' or ";
+            else {
+                // and this one too
+                $query_users .= "users.id = '".$id."' ";
+            }
+            $i++;
+        }
+        //$output["user_query"]= $query_users;
+        $event_user_s_res = mysqli_query($this->con,$query_users) or die (mysqli_error($this->con));
+        return $event_user_s_res;
+
+    }
+
     //forgot password,login,register,update profile
 
     //create event
@@ -119,6 +142,7 @@ class DBFunctions {
 
     //get_event
     function getEventsManagedById($mng_id){
+        $result = array();
         $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' AND event.event_status = '1'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
@@ -191,5 +215,12 @@ class DBFunctions {
         WHERE event.event_id = '$event_id'") or die (mysqli_error($this->con));
         return $result;
     }
+
+    function DeleteEventFromAttending($event_id){
+        $del_query = "DELETE from attending WHERE attending.event_id = '$event_id'";
+        $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
+        return $result_q;
+    }
     //Update Event
+
 }
