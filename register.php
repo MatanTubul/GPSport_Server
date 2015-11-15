@@ -69,7 +69,6 @@ class Register implements ResponseProcess{
                 print(json_encode($output));
             }else {
                 $output["flag"]="succeed";
-                $output["usecase"]="register";
             }
         }
         return json_encode($output);

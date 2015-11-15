@@ -47,11 +47,7 @@ class Login implements ResponseProcess{
                 else
                 {
                     $output["flag"]="verified";          //user can login
-
-                    $passFunc = new PasswordFunctions();
-                    $pass = $passFunc->decrypt($row["password"],$row["salt"]);
                     $output["password"] = $pass;
-
                     $output["name"] =  $row["fname"];
                     $output["gender"] =  $row["gender"];
                     $output["age"] =  $row["age"];

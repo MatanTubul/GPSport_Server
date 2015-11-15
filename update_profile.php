@@ -73,10 +73,8 @@ class UpdateProfile implements ResponseProcess{
         }
 
         $passFunc = new PasswordFunctions();
-
         $salt = $passFunc->random_password();
         $pass = $passFunc->encrypt($pass, $salt);
-
 
         $imageName = $prevMob.".jpg";
         $oldFilePath = "images/".$imageName;
@@ -102,7 +100,6 @@ class UpdateProfile implements ResponseProcess{
                 print(json_encode($output));}
         else {
             $output["flag"]="succeed";
-            $output["usecase"] = "update";
         }
 
         return json_encode($output);
