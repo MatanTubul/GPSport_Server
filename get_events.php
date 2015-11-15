@@ -28,8 +28,6 @@ class get_events implements ResponseProcess{
         }else{
             $output["flag"] = "success";
             $events = array();
-
-            $sizes = array();
             $i=0;
             while($row = mysqli_fetch_assoc($result_q))
             {
@@ -51,8 +49,7 @@ class get_events implements ResponseProcess{
                 $row["event_users"] = $event_users;
                 $events[] = $row;
             }
-
-
+            $output["iteratins"] = $i;
             $output["events"] = $events;
         }
         return json_encode($output);

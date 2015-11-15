@@ -221,6 +221,23 @@ class DBFunctions {
         $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
         return $result_q;
     }
+
+    function InsertIntoAttendingUpdatedUsers($event_user_s_res,$event_id,$size_of_param){
+        $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
+        $status = "deny";
+        for($i=0;$i<$size_of_param;$i++)
+        {
+            if($i<$size_of_param - 1)
+                $insert_query .= "('" .$event_id. "','" .$event_user_s_res[$i]. "','" .$status. "'), ";
+            else
+                $insert_query .= "('".$event_id."','".$event_user_s_res[$i]."','".$status."') ";
+
+        }
+        $insert_query_res["query"]=$insert_query;
+        $insert_query_res["res"] = mysqli_query($this->con,$insert_query) or die (mysqli_error($this->con));
+        return ($insert_query_res);
+    }
+
     //Update Event
 
 }

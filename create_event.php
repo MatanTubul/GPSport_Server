@@ -63,14 +63,18 @@ class CreateEvent implements ResponseProcess {
                     return json_encode($output);
                 }else{
                     $participants = $_POST["invitedUsers"];
-                    $json_uesr = json_decode($participants);
+                    $json_uesr_ids = json_decode($participants);
+                    $output["json_users"] = $json_uesr_ids;
                     $ids = array();
-                    foreach($json_uesr as $user)
+                    foreach($json_uesr_ids as $user)
                     {
                         $ids[] = $user["id"];
                     }
-                    $result_q = $dbF -> insertIntoAttendingTable($ids,$event_id,count($ids));
-                    if(!$result_q)
+                    $output["ids"] = $ids;
+                    $output["size"] = count($json_uesr_ids);
+                   $result_q = $dbF -> InsertIntoAttendingUpdatedUsers($json_uesr_ids,$event_id,count($json_uesr_ids));
+                    $output["insert_res"] = $result_q;
+                    /*if(!$result_q)
                     {
                         $output["flag"]= "update_insert failed";
                         $output["msg"] = $result_q;
@@ -78,7 +82,7 @@ class CreateEvent implements ResponseProcess {
                     }else{
                         $output["flag"]= "update_success";
                         $output["msg"] = $result_q;
-                    }
+                    }*/
                 }
             }
         }
@@ -107,7 +111,7 @@ class CreateEvent implements ResponseProcess {
                     }
                     else{
 
-                        if(isset($_POST["invitedUsers"])){
+                        if(isset($_POST["jsoninvited"])){
 
                             $event_s_res = $dbF ->getEventIdByDateAndTime($date,$s_time,$e_time);
 
