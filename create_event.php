@@ -38,21 +38,54 @@ class CreateEvent implements ResponseProcess {
 
         if($mode == "edit"){
             $event_id = $_POST["event_id"];
-            $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched);
-            $affected_row = mysqli_affected_rows($dblink);
-            if(!$result_q)
-            {
-                $output["flag"]= "update_failed";
-                $output["query_res"] = $result_q;
-                $output["msg"] = "failed to update event";
-                $output["affected row"] = $affected_row;
 
-            }
-            else{
-                $output["flag"]= "update_success";
-                $output["query_res"] = $result_q;
-                $output["msg"] = "success to update event";
-                $output["affected row"] = $affected_row;
+            if(isset($_POST["invitedUsers"])){
+                $result_q = $dbF -> DeleteEventFromAttending($event_id);
+                if(!$result_q)
+                {
+                    $output["flag"]= "delete failed";
+                    $output["msg"] = $result_q;
+                    return json_encode($output);
+                }else{
+                    $participants = $_POST["invitedUsers"];
+                    $json_uesr_ids = json_decode($participants);
+                    $output["json_users"] = $json_uesr_ids;
+                    $ids = array();
+                    foreach($json_uesr_ids as $user)
+                    {
+                        $ids[] = $user["id"];
+                    }
+                    $output["ids"] = $ids;
+                    $output["size"] = count($json_uesr_ids);
+                    $current_participants = count($json_uesr_ids) + 1;
+                   $result_q = $dbF -> InsertIntoAttendingUpdatedUsers($json_uesr_ids,$event_id,count($json_uesr_ids));
+                    $output["insert_res"] = $result_q;
+                    if(!$result_q)
+                    {
+                        $output["flag"]= "update_insert failed";
+                        $output["msg"] = $result_q;
+                        return json_encode($output);
+                    }else{
+                        $output["flag"]= "update_success";
+                        $output["msg"] = $result_q;
+                    }
+                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched);
+                    $affected_row = mysqli_affected_rows($dblink);
+                    if(!$result_q)
+                    {
+                        $output["flag"]= "update_failed";
+                        $output["query_res"] = $result_q;
+                        $output["msg"] = "failed to update event";
+                        $output["affected row"] = $affected_row;
+
+                    }
+                    else{
+                        $output["flag"]= "update_success";
+                        $output["query_res"] = $result_q;
+                        $output["msg"] = "success to update event";
+                        $output["affected row"] = $affected_row;
+                    }
+                }
             }
         }
         else{
@@ -80,7 +113,7 @@ class CreateEvent implements ResponseProcess {
                     }
                     else{
 
-                        if(isset($_POST["invitedUsers"])){
+                        if(isset($_POST["jsoninvited"])){
 
                             $event_s_res = $dbF ->getEventIdByDateAndTime($date,$s_time,$e_time);
 

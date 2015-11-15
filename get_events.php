@@ -28,10 +28,28 @@ class get_events implements ResponseProcess{
         }else{
             $output["flag"] = "success";
             $events = array();
+            $i=0;
             while($row = mysqli_fetch_assoc($result_q))
             {
+                $participants = array();
+                $event_users = array();
+                if($row["current_participants"] > 1){
+                    $i++;
+                    $users_ids = $dbF ->getUserIDByEvent($row["event_id"]);
+                    while($row_participants = mysqli_fetch_assoc($users_ids))
+                    {
+                        $participants[] = $row_participants["user_id"];
+                    }
+                    $users_details = $dbF -> getUserSByIds($participants,count($participants));
+                    while($row_users =  mysqli_fetch_assoc($users_details)){
+                        $event_users[]=$row_users;
+                    }
+                }
+                //$row["participants"]=
+                $row["event_users"] = $event_users;
                 $events[] = $row;
             }
+            $output["iteratins"] = $i;
             $output["events"] = $events;
         }
         return json_encode($output);

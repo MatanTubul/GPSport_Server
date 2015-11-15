@@ -24,6 +24,29 @@ class DBFunctions {
         or die (mysqli_error($this->con));
         return $result;
     }
+    function getUserIDByEvent($event_id){
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id'")
+        or die (mysqli_error($this->con));
+        return $result;
+    }
+    function getUserSByIds($user_ids,$size){
+        $query_users = "SELECT * From users WHERE ";
+        $i=0;
+        foreach($user_ids as $id) {
+            if ($i < $size - 1)
+                $query_users .= "users.id = '".$id."' or ";
+            else {
+                // and this one too
+                $query_users .= "users.id = '".$id."' ";
+            }
+            $i++;
+        }
+        //$output["user_query"]= $query_users;
+        $event_user_s_res = mysqli_query($this->con,$query_users) or die (mysqli_error($this->con));
+        return $event_user_s_res;
+
+    }
+
     //forgot password,login,register,update profile
 
     //create event
@@ -119,6 +142,7 @@ class DBFunctions {
 
     //get_event
     function getEventsManagedById($mng_id){
+        $result = array();
         $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' AND event.event_status = '1'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
@@ -183,13 +207,37 @@ class DBFunctions {
     //Update Profile
 
     //Update Event
-    function UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched)
+    function UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched)
     {
         $result = mysqli_query($this->con, "UPDATE event SET kind_of_sport = '$sport',event_date = '$date',start_time ='$s_time'
         ,end_time = '$e_time',address ='$place',longtitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
-        max_participants = '$max_p',scheduled = '$sched'
+        max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched'
         WHERE event.event_id = '$event_id'") or die (mysqli_error($this->con));
         return $result;
     }
+
+    function DeleteEventFromAttending($event_id){
+        $del_query = "DELETE from attending WHERE attending.event_id = '$event_id'";
+        $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
+        return $result_q;
+    }
+
+    function InsertIntoAttendingUpdatedUsers($event_user_s_res,$event_id,$size_of_param){
+        $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
+        $status = "deny";
+        for($i=0;$i<$size_of_param;$i++)
+        {
+            if($i<$size_of_param - 1)
+                $insert_query .= "('" .$event_id. "','" .$event_user_s_res[$i]. "','" .$status. "'), ";
+            else
+                $insert_query .= "('".$event_id."','".$event_user_s_res[$i]."','".$status."') ";
+
+        }
+        $insert_query_res["query"]=$insert_query;
+        $insert_query_res["res"] = mysqli_query($this->con,$insert_query) or die (mysqli_error($this->con));
+        return ($insert_query_res);
+    }
+
     //Update Event
+
 }
