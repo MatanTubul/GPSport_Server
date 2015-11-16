@@ -39,6 +39,7 @@ class UpdateProfile implements ResponseProcess{
         $whoAsChanged = $_POST ['changed'];
         //none, email only, mobile only, both
         $output = array();
+        $dbF = new DBFunctions($dblink);
 
         $output["usercheck"] = "user check";
         $output["mobilecheck"] = "mobile check";
@@ -89,9 +90,10 @@ class UpdateProfile implements ResponseProcess{
         file_put_contents($newFilePath,base64_decode($pic));
 
         //update user details to DB
-        $updateResult=mysqli_query($dblink,"UPDATE users SET fname = '$name', email = '$newEmail', gender = '$gen',
+        /*$updateResult=mysqli_query($dblink,"UPDATE users SET fname = '$name', email = '$newEmail', gender = '$gen',
         age = '$birth', password = '$pass', salt = '$salt', image = '$imageName', mobile = '$newMob', gcm_id = '$gcm_id'
-        WHERE users.email = '$prevEmail' ") or die((mysqli_error($dblink)));
+        WHERE users.email = '$prevEmail' ") or die((mysqli_error($dblink)));*/
+        $updateResult = $dbF ->  UpdateProfile($name,$newEmail,$gen,$birth,$pass,$salt,$imageName,$newMob,$gcm_id,$prevEmail);
 
         if(!$updateResult)
             {
