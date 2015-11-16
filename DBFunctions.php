@@ -237,7 +237,6 @@ class DBFunctions {
         $insert_query_res["res"] = mysqli_query($this->con,$insert_query) or die (mysqli_error($this->con));
         return ($insert_query_res);
     }
-
     //Update Event
 
 }
