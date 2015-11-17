@@ -57,7 +57,7 @@ class CreateEvent implements ResponseProcess {
                     }
                     $output["ids"] = $ids;
                     $output["size"] = count($json_uesr_ids);
-                    $current_participants = count($json_uesr_ids) + 1;
+                    //$current_participants = count($json_uesr_ids) + 1;
                    $result_q = $dbF -> InsertIntoAttendingUpdatedUsers($json_uesr_ids,$event_id,count($json_uesr_ids));
                     $output["insert_res"] = $result_q;
                     if(!$result_q)
@@ -69,7 +69,7 @@ class CreateEvent implements ResponseProcess {
                         $output["flag"]= "update_success";
                         $output["msg"] = $result_q;
                     }
-                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched);
+                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched);
                     $affected_row = mysqli_affected_rows($dblink);
                     if(!$result_q)
                     {
