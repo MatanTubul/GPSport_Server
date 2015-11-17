@@ -9,10 +9,10 @@ define ('mysql_host','pdb3.biz.nf');
 define ('mysql_user','1934398_gpsport');
 define ('mysql_password','gpsportBraude15');
 define ('myDB','1934398_gpsport');
-define ("GOOGLE_API_KEY","AIzaSyBSGW3kNZ_GNsBsTdJBKsyAbcTfaqv3uvo");
+
 
 $dblink= mysqli_connect(mysql_host, mysql_user, mysql_password,myDB);
-
+$logmessage;
 
 if (!$dblink)
 {
@@ -24,23 +24,29 @@ if (!$dblink)
     echo $message;
     return;
 }
-else{
-    echo "connection success"."<br/>";
+else {
+    $c_date = date("Y-m-d");
+    date_default_timezone_set('Asia/Jerusalem');
+    $c_time = date("h:i:sa");
+    $query = "UPDATE event SET event_status = '0' WHERE event.event_date < '$c_date' OR '$c_time' >  event.start_time";
+    $res = mysqli_query($dblink, $query) or die (mysqli_error($dblink));
+    $affected_row = mysqli_affected_rows($dblink);
+    if (!$res) {
+        $logmessage = $c_time . ":failed to update event!";
+    } else {
+        $logmessage = $c_time . "  :event updated successfully numbers of rows that affected:".$affected_row;
+    }
 }
-$c_date = date("Y-m-d");
-$c_time = date("h:i:sa");
-date_default_timezone_set('Asia/Jerusalem');
-$c_time = date("h:i:sa");
-echo $my_time."<br/>";
-echo $c_time."<br/>";;
-$query = "UPDATE event SET event_status = '0' WHERE event.event_date < '$c_date' OR '$c_time' >  event.start_time";
-$res = mysqli_query($dblink,$query) or die (mysqli_error($dblink));
-if(!$res){
-    echo "failed to update event!"."<br/>";
-    echo $my_time."<br/>";
-}
-else{
-    echo "event updated successfully";
-}
+$filename = "updatelog.txt";
+    if(file_exists($filename)) {
+        file_put_contents($filename, $logmessage."\n",FILE_APPEND);
+        echo "append";
+    } else {
+        $handle = fopen($filename, 'w+') or die("Unable to open file!");
+        fwrite($handle, $logmessage);
+        fclose($handle);
+        echo "create";
+    }
+
 $dblink ->close();
 ?>
