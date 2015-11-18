@@ -51,7 +51,7 @@ class DBFunctions {
 
     //create event
     function  checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time){
-        $query = "SELECT * FROM event WHERE (event.longtitude = '$lon' AND event.latitude = '$lat')
+        $query = "SELECT * FROM event WHERE (event.longitude = '$lon' AND event.latitude = '$lat')
                 AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time')
                 OR (event.end_time BETWEEN '$s_time' AND '$e_time'))";
 
@@ -60,7 +60,7 @@ class DBFunctions {
     }
 
     function InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched){
-        $result = mysqli_query($this->con, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,address,longtitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
+        $result = mysqli_query($this->con, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,address,longitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
              VALUES ('$manager','$sport','$date','$s_time','$e_time','$place','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($this->con));
         return $result;
     }
@@ -209,7 +209,7 @@ class DBFunctions {
     function UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched)
     {
         $result = mysqli_query($this->con, "UPDATE event SET kind_of_sport = '$sport',event_date = '$date',start_time ='$s_time'
-        ,end_time = '$e_time',address ='$place',longtitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
+        ,end_time = '$e_time',address ='$place',longitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
         max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched'
         WHERE event.event_id = '$event_id'") or die (mysqli_error($this->con));
         return $result;
