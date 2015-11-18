@@ -28,7 +28,7 @@ else {
     $c_date = date("Y-m-d");
     echo $c_date."<br/>";
     date_default_timezone_set('Asia/Jerusalem');
-    $c_time = date("Y-m-d h:i:s");
+    $c_time = date("Y-m-d G:i:s");
     echo $c_time."<br/>";
     $query = "UPDATE event SET event.event_status = '0' WHERE (event.event_date < '$c_date' OR '$c_time' > event.start_time)";
     $res = mysqli_query($dblink, $query) or die (mysqli_error($dblink));
