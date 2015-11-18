@@ -67,24 +67,32 @@ switch ($tag){
     }
     case "response_invited_user": {
         include_once 'invited_user.php';
-        $invited_user = new invited_user();
-        echo($invited_user ->dataProcess($dblink));
+        $inviteduser = new invited_user();
+        echo($inviteduser ->dataProcess($dblink));
         break;
     }
     case "get_event":
     {
         include_once 'get_events.php';
-        $getEvent = new get_events();
-        echo($getEvent -> dataProcess($dblink));
+        $getevents = new get_events();
+        echo($getevents -> dataProcess($dblink));
         break;
     }
     case "delete_event":
     {
         include_once 'delete_event.php';
-        $dlevent = new delete_event();
-        echo($dlevent -> dataProcess($dblink));
+        $deleteevents = new delete_event();
+        echo($deleteevents -> dataProcess($dblink));
         break;
     }
+    case "search_events":
+    {
+        include 'search_events.php';
+        $searchevents = new search_events();
+        echo($searchevents -> dataProcess($dblink));
+        break;
+    }
+
 
 //case others...
 }
