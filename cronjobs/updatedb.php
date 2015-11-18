@@ -26,7 +26,6 @@ if (!$dblink)
 }
 else {
     $c_date = date("Y-m-d");
-    echo $c_date."<br/>";
     date_default_timezone_set('Asia/Jerusalem');
     $c_time = date("Y-m-d G:i:s");
     echo $c_time."<br/>";
