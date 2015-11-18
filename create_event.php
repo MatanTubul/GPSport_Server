@@ -21,8 +21,10 @@ class CreateEvent implements ResponseProcess {
 
         $sport = $_POST["sport_type"];
         $date = date("Y-m-d",strtotime(str_replace('/','-',$_POST["date"])));
-        $s_time =$_POST["s_time"];
-        $e_time = $_POST["e_time"];
+        $s_time =$date." ".$_POST["s_time"];
+        $e_time = $date." ".$_POST["e_time"];
+        $s_time =date("Y-m-d H:i:s",strtotime($s_time));
+        $e_time = date("Y-m-d H:i:s",strtotime($e_time));
         $lon = $_POST["lon"];
         $lat = $_POST["lat"];
         $event_type = $_POST["event_type"];
@@ -77,7 +79,6 @@ class CreateEvent implements ResponseProcess {
                         $output["query_res"] = $result_q;
                         $output["msg"] = "failed to update event";
                         $output["affected row"] = $affected_row;
-
                     }
                     else{
                         $output["flag"]= "update_success";
