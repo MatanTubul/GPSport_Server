@@ -36,9 +36,6 @@ class Register implements ResponseProcess{
         $result1 = $dbF ->getUserByEmail($email);
         $result2 = $dbF -> getUserByMobile($mob);
 
-       /*$result1 = mysqli_query($dblink,"SELECT * FROM users WHERE users.email= '$email'");
-        $result2 = mysqli_query($dblink,"SELECT * FROM users WHERE users.mobile= '$mob'");*/
-
         if((!$result1) || (!$result2)){
             $output["error_msg"] = "signup query failed";
             print(json_encode($output));
@@ -56,10 +53,6 @@ class Register implements ResponseProcess{
         else
         {
             $userStatus = 0;
-            //user registered
-            //insert user details to DB
-           /* $insertResult=mysqli_query($dblink,"INSERT INTO users (fname, email, gender, age, password, salt, userstatus, image,mobile,gcm_id) VALUES
-               ('$name', '$email', '$gen', '$birth', '$pass','$salt','$userStatus','$imageName','$mob','$gcm_id')") or die((mysqli_error($dblink)));*/
             $insertResult = $dbF -> InsertUserIntoDB($name,$email,$gen,$birth,$pass,$salt,$userStatus,$imageName,$mob,$gcm_id);
 
             if(!$insertResult)
@@ -68,8 +61,15 @@ class Register implements ResponseProcess{
                 $output["error_msg"] = $insertResult;
                 print(json_encode($output));
             }else {
-                $output["flag"]="succeed";
-            }
+                    $output["flag"]="succeed";
+                    $to      = $email;
+                    $subject = 'GPSport Registration';
+                    $message = $name.",\n"."Thank you for signing  up to GPSport application"."\n"."In any problem please contact our support at GPSport.braude@gmail.com"."\n"."Thank You"."\n"."GPSport Team";
+                    $headers = 'From: noreply@gpsport.co.nf' . "\r\n" .
+                        'X-Mailer: PHP/' . phpversion();
+                    mail($to, $subject, $message, $headers);
+
+                }
         }
         return json_encode($output);
     }
