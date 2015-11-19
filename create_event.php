@@ -179,7 +179,7 @@ class CreateEvent implements ResponseProcess {
                                         $output["msg"] = "success to insert into attending";
                                         $gcm = new GCM();
                                         $data = array();
-                                        $message = "Would like to invite you to play ".$sport.",please click on Join in order to add you into the event.";
+                                        $message = "Would like to invite you to play ".$sport.", Please click on Join in order to add you into the event.";
                                         $data['message'] = $message;
                                         $data['date'] = $date;
                                         $data['start_time'] = date("H:i",strtotime($s_time));
