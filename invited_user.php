@@ -17,15 +17,11 @@ class invited_user implements ResponseProcess {
         $dbF = new DBFunctions($dblink);
         $user_id = $_POST['userId'];
         $event_id = $_POST['event_id'];
-        $status = "approved";
-
+        $status = "approve";
 
         $output["user_id"] =$user_id;
         $output["event_id"] = $event_id;
         $result_q = $dbF ->UpdateUserchoiceIntoAttending($status,$event_id,$user_id);
-
-        /*$query = "UPDATE attending SET attending.status = '$status' WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'";
-        $result_q = mysqli_query($dblink,$query) or die (mysqli_error($dblink));*/
 
         $affected_row = mysqli_affected_rows($dblink);
 
@@ -41,8 +37,6 @@ class invited_user implements ResponseProcess {
             $output["affected row"] = $affected_row;
             $result_e_q = $dbF ->UpdateCurrentParticipants($event_id);
 
-            /*$event_query = "UPDATE event SET event.current_participants = event.current_participants+1 WHERE event.event_id = '$event_id' and (event.max_participants > event.current_participants)";
-            $result_e_q  = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));*/
             if(!$result_e_q){
                 $output["flag"]= "update_failed";
                 $output["msg"] = "failed to update event table";
