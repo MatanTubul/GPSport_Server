@@ -51,22 +51,22 @@ class DBFunctions {
 
     //create event
     function  checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time){
-        $query = "SELECT * FROM event WHERE (event.longitude = '$lon' AND event.latitude = '$lat')
-                AND event.event_date = '$date' And ((event.start_time BETWEEN '$s_time' AND '$e_time')
-                OR (event.end_time BETWEEN '$s_time' AND '$e_time'))";
+        $query = "SELECT * FROM events WHERE (events.longitude = '$lon' AND events.latitude = '$lat')
+                AND events.event_date = '$date' And ((events.start_time BETWEEN '$s_time' AND '$e_time')
+                OR (events.end_time BETWEEN '$s_time' AND '$e_time'))";
 
         $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
         return $result_q;
     }
 
     function InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched){
-        $result = mysqli_query($this->con, "INSERT into event(manager_id,kind_of_sport,event_date,start_time,end_time,address,longitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
+        $result = mysqli_query($this->con, "INSERT into events(manager_id,kind_of_sport,event_date,start_time,end_time,address,longitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,event_status)
              VALUES ('$manager','$sport','$date','$s_time','$e_time','$place','$lon','$lat','$event_type','$gen','$min_age','$max_p','1','$sched','1')") or die (mysqli_error($this->con));
         return $result;
     }
 
     function getEventIdByDateAndTime($date,$s_time,$e_time){
-        $query_id = "SELECT event_id From event WHERE event.event_date = '$date' and event.start_time = '$s_time' and event.end_time = '$e_time'";
+        $query_id = "SELECT event_id From events WHERE events.event_date = '$date' and events.start_time = '$s_time' and events.end_time = '$e_time'";
         $event_s_res = mysqli_query($this->con,$query_id) or die (mysqli_error($this->con));
         return $event_s_res;
     }
@@ -122,7 +122,7 @@ class DBFunctions {
     }
 
     function UpdateEventManagerId($user_id,$event_id){
-        $event_query = "UPDATE event SET event.manager_id = '$user_id',event.current_participants = event.current_participants - 1 WHERE event.event_id = '$event_id'";
+        $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants - 1 WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -134,7 +134,7 @@ class DBFunctions {
     }
 
     function UpdateEventStatus($event_id){
-        $event_query = "UPDATE event SET event.event_status = '0' WHERE event.event_id = '$event_id'";
+        $event_query = "UPDATE events SET events.event_status = '0' WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -143,7 +143,7 @@ class DBFunctions {
     //get_event
     function getEventsManagedById($mng_id){
         $result = array();
-        $event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' AND event.event_status = '1'";
+        $event_query = "SELECT * from events WHERE events.manager_id = '$mng_id' AND events.event_status = '1'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -157,7 +157,7 @@ class DBFunctions {
     }
 
     function UpdateCurrentParticipants($event_id){
-        $event_query = "UPDATE event SET event.current_participants = event.current_participants+1 WHERE event.event_id = '$event_id' AND (event.max_participants > event.current_participants)";
+        $event_query = "UPDATE events SET events.current_participants = events.current_participants+1 WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
         $result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_e_q;
     }
@@ -208,10 +208,10 @@ class DBFunctions {
     //Update Event
     function UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched)
     {
-        $result = mysqli_query($this->con, "UPDATE event SET kind_of_sport = '$sport',event_date = '$date',start_time ='$s_time'
+        $result = mysqli_query($this->con, "UPDATE events SET kind_of_sport = '$sport',event_date = '$date',start_time ='$s_time'
         ,end_time = '$e_time',address ='$place',longitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
         max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched'
-        WHERE event.event_id = '$event_id'") or die (mysqli_error($this->con));
+        WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
         return $result;
     }
 
