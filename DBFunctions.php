@@ -238,4 +238,12 @@ class DBFunctions {
     }
     //Update Event
 
+    //logout
+    function  LogOutUser($user){
+        $result = mysqli_query($this ->con, "UPDATE users SET userstatus = '0' WHERE users.email= '$user'")
+        or die (mysqli_error($this->con));
+        return $result;
+    }
+
+
 }

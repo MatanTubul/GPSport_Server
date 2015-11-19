@@ -8,6 +8,7 @@
 
 error_reporting(0);
 require 'connection.php';
+require_once 'DBFunctions.php';
 $output = array();
 
 $tag = $_POST['tag'];
@@ -35,7 +36,8 @@ switch ($tag){
     }
     case "logout": {
         $user = $_POST["username"];
-        $logoutres = mysqli_query($dblink, "UPDATE users SET userstatus = '0' WHERE users.email= '$user'");
+        $dbF = new DBFunctions($dblink);
+        $logoutres = $dbF -> LogOutUser($user);
         if (!$logoutres) {
             $output["flag"] = "query failed";
         } else {
