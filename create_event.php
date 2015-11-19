@@ -52,14 +52,17 @@ class CreateEvent implements ResponseProcess {
                     $participants = $_POST["invitedUsers"];
                     $json_uesr_ids = json_decode($participants);
                     $output["json_users"] = $json_uesr_ids;
-                    $ids = array();
-                    foreach($json_uesr_ids as $user)
+                    $get_users_reg_ids = $dbF->getUserSByIds($json_uesr_ids,count($json_uesr_ids));
+                    $reg_ids = array();
+                    $i=0;
+                    while($row_user = mysqli_fetch_assoc($get_users_reg_ids))
                     {
-                        $ids[] = $user["id"];
+                        $reg_ids[$i] = $row_user["gcm_id"];
+                        $i++;
                     }
-                    $output["ids"] = $ids;
+                    $output["ids"] = $reg_ids;
                     $output["size"] = count($json_uesr_ids);
-                    //$current_participants = count($json_uesr_ids) + 1;
+
                    $result_q = $dbF -> InsertIntoAttendingUpdatedUsers($json_uesr_ids,$event_id,count($json_uesr_ids));
                     $output["insert_res"] = $result_q;
                     if(!$result_q)
@@ -71,6 +74,21 @@ class CreateEvent implements ResponseProcess {
                         $output["flag"]= "update_success";
                         $output["msg"] = $result_q;
                     }
+                    //send notification on update to users
+                    $gcm = new GCM();
+                    $data = array();
+                    $message = "The event ".$sport." in ".$place." in ".$date." updated,Please click on Join in order to confirm registration.";
+                    $data['message'] = $message;
+                    $data['date'] = $date;
+                    $data['start_time'] = date("H:i",strtotime($s_time));
+                    $data['end_time'] = date("H:i",strtotime($e_time));
+                    $data['inviter'] = $mng_name;
+                    $data['event_id'] = $event_id;
+                    $data['location'] = $place;
+                    $gcm_res = $gcm->send_notification($reg_ids,$data);
+                    $output["gcm_res"] = $gcm_res;
+                    //send notification on update to users
+
                     $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched);
                     $affected_row = mysqli_affected_rows($dblink);
                     if(!$result_q)
