@@ -18,6 +18,7 @@ class get_events implements ResponseProcess{
         $mng_id = $_POST["manager_id"];
         $result_q = $dbF ->getEventsManagedById($mng_id);
 
+
         /*$event_query = "SELECT * from event WHERE event.manager_id = '$mng_id' and event.event_status = '1'";
         $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));*/
 
@@ -47,6 +48,8 @@ class get_events implements ResponseProcess{
                 }
                 //$row["participants"]=
                 $row["event_users"] = $event_users;
+                $row["formatted_start_time"] = date("H:i",strtotime($row["start_time"]));
+                $row["formatted_end_time"] = date("H:i",strtotime($row["end_time"]));
                 $events[] = $row;
             }
             $output["iteratins"] = $i;
