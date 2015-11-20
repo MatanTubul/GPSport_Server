@@ -23,9 +23,9 @@ class search_events implements ResponseProcess{
         $mng_id = $_POST["manager_id"];
         //$result_q = $dbF ->getEventsManagedById($mng_id);
 
-        $event_query = "SELECT * from event WHERE acos(sin(event.latitude * 0.0175) * sin($user_lat * 0.0175)
-        + cos(event.latitude * 0.0175) * cos($user_lat * 0.0175) *
-        cos(($user_long * 0.0175) - (event.longitude * 0.0175))) * 3959 <= $radius";
+        $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin($user_lat * 0.0175)
+        + cos(events.latitude * 0.0175) * cos($user_lat * 0.0175) *
+        cos(($user_long * 0.0175) - (events.longitude * 0.0175))) * 6371 <= $radius";
         $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));
 
         if(!$result_q) {
