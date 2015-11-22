@@ -20,12 +20,16 @@ class search_events implements ResponseProcess{
         $user_long = floatval($_POST["lon"]);
         $radius = floatval($_POST["radius"]);
 
+        date_default_timezone_set('Asia/Jerusalem');
+        $today = date('Y-m-d');
+
+
         $mng_id = $_POST["manager_id"];
         //$result_q = $dbF ->getEventsManagedById($mng_id);
 
-        $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin($user_lat * 0.0175)
-        + cos(events.latitude * 0.0175) * cos($user_lat * 0.0175) *
-        cos(($user_long * 0.0175) - (events.longitude * 0.0175))) * 6371 <= $radius";
+        $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin('$user_lat' * 0.0175)
+        + cos(events.latitude * 0.0175) * cos('$user_lat' * 0.0175) *
+        cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius' AND events.event_status = '0' AND events.private = 'false' AND events.event_date = '$today'";
         $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));
 
         if(!$result_q) {
