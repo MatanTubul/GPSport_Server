@@ -20,7 +20,6 @@ class delete_event implements ResponseProcess {
         $dbF = new DBFunctions($dblink);
         $event_id = $_POST["event_id"];
         $output["event_id"]= $event_id;
-        return $output;
         $result_q = $dbF -> getEventByEventIdFromAttending($event_id);
         /*$attending_query = "SELECT * from attending WHERE attending.event_id = '$event_id'";
         $result_q = mysqli_query($dblink,$attending_query) or die (mysqli_error($dblink));*/
