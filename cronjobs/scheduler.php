@@ -82,7 +82,7 @@ else {
                                       END
                              END ),
                       events.event_status = '1'
-                     WHERE events.scheduled = '1'";
+                     WHERE events.scheduled = '1' and events.event_status = '0' ";
 }
     echo $sched_query."<br/>";
     $res_sched_query = mysqli_query($dblink, $sched_query) or die (mysqli_error($dblink));
