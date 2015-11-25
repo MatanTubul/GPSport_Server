@@ -1,6 +1,6 @@
 <?php
 /**
- * this script will update events that enabled the scheduling mode by manipulating the DB
+ * this script will change the event status of all the events that are not updated.
  * Created by PhpStorm.
  * User: matant
  * Date: 11/17/2015
