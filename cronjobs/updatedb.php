@@ -28,7 +28,7 @@ define ('myDB','1934398_gpsport');
         date_default_timezone_set('Asia/Jerusalem');
         $c_time = date("Y-m-d G:i:s");
         echo $c_time."<br/>";
-        $query = "UPDATE events SET events.event_status = '0' WHERE (events.event_date < '$c_date' OR '$c_time' > events.start_time)";
+        $query = "UPDATE events SET events.event_status = '0' WHERE (events.start_time < '$c_date' OR '$c_time' > events.start_time)";
         $res = mysqli_query($dblink, $query) or die (mysqli_error($dblink));
         $affected_row = mysqli_affected_rows($dblink);
         if (!$res) {
