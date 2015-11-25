@@ -162,8 +162,9 @@ class DBFunctions {
 
     //get_event
     function getEventsManagedById($mng_id){
-        $result = array();
-        $event_query = "SELECT * from events WHERE events.manager_id = '$mng_id' AND events.event_status = '1'";
+        date_default_timezone_set('Asia/Jerusalem');
+        $c_time = date("Y-m-d H:i:s");
+        $event_query = "SELECT * from events WHERE events.manager_id = '$mng_id' AND events.event_status = '1' AND '$c_time' <= events.start_time";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }

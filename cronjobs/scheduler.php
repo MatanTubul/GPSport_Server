@@ -23,7 +23,6 @@ if (!$dblink)
 }
 else {
     $c_date = date("Y-m-d");
-
     $update_sched_column = "UPDATE events
                                  SET  events.scheduled = (
                                  CASE WHEN sched_exp_type = 'counter' and events.sched_counter <= '0' THEN '0'

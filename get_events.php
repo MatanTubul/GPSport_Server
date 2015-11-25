@@ -48,6 +48,7 @@ class get_events implements ResponseProcess{
                 }
                 //$row["participants"]=
                 $row["event_users"] = $event_users;
+                $row["event_date"] = date("Y-m-d",strtotime($row["start_time"]));
                 $row["formatted_start_time"] = date("H:i",strtotime($row["start_time"]));
                 $row["formatted_end_time"] = date("H:i",strtotime($row["end_time"]));
                 $events[] = $row;
