@@ -11,9 +11,6 @@ require_once 'DBFunctions.php';
 
 
 class CreateEvent implements ResponseProcess {
-
-
-
     public function dataProcess($dblink)
     {
         $output = array();
@@ -36,7 +33,6 @@ class CreateEvent implements ResponseProcess {
         $mng_name = $_POST["manager_name"];
         $place = $_POST["address"];
         $mode = $_POST["mode"];
-
 
         if($mode == "edit"){
             $event_id = $_POST["event_id"];
@@ -123,8 +119,39 @@ class CreateEvent implements ResponseProcess {
                 if ($no_of_rows < 1) {
                     $output["flag"] = "success";
                     $output["msg"] = "insert event";
+                    $repeat = $_POST["repeat"];
+                    $duration = $_POST["duration"];
+                    $expiration_tag = $_POST["sched_tag"];
+                    $exp_val = "";
+                    $type = "";
+                    if($sched == "true"){
 
-                    $result = $dbF -> InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched);
+                        switch($expiration_tag){
+                            case "unlimited":{
+                                $exp_val = "unlimited";
+                                $type = $exp_val;
+                                break;
+                            }
+                            case "Year":{
+                                $exp_val = date("Y-m-d",strtotime($_POST["value"]));
+                                $type = "date";
+                                break;
+                            }
+                            case "events_number":
+                                $exp_val = $_POST["value"];
+                                $type = "counter";
+                                break;
+                            case "by_date":
+                                $exp_val = date("Y-m-d",strtotime($_POST["value"]));
+                                $type = "date";
+                                break;
+                        }
+                        $output["repeat"] = $repeat;
+                        $output["duration"] = $duration;
+                        $output["exp_val"] = $exp_val;
+                    }
+
+                    $result = $dbF -> InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched,$repeat,$duration,$type,$exp_val);
                     if (!$result) {
                         $output["flag"] = "failed to create event";
                         // return (json_encode($output));
