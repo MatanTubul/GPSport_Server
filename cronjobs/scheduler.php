@@ -1,5 +1,6 @@
 <?php
 /**
+ * this script will change the event status of all the events that are not updated.
  * Created by PhpStorm.
  * User: matant
  * Date: 11/25/2015
