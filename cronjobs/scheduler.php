@@ -83,7 +83,7 @@ else {
                              END ),
                       events.event_status = '1',
                       events.sched_counter = (CASE sched_exp_type
-                                               WHEN 'counter' THEN (events.sched_counter - 1)
+                                               WHEN 'counter' and events.sched_counter > 0  THEN (events.sched_counter - 1)
                                                ELSE events.sched_counter
                                                END)
                      WHERE events.scheduled = '1' and events.event_status = '0' ";
