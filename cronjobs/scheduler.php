@@ -81,11 +81,18 @@ else {
                                          ELSE NULL
                                       END
                              END ),
-                      events.event_status = '1'
+                      events.event_status = '1',
+                      events.sched_counter = (CASE sched_exp_type
+                                               WHEN 'counter' THEN (events.sched_counter - 1)
+                                               ELSE events.sched_counter
+                                               END)
                      WHERE events.scheduled = '1' and events.event_status = '0' ";
 }
     echo $sched_query."<br/>";
+
     $res_sched_query = mysqli_query($dblink, $sched_query) or die (mysqli_error($dblink));
     echo "<br/>".$res_sched_query."<br/>";
+    $affected_row = mysqli_affected_rows($dblink);
+    echo $affected_row."<br/";
 $dblink ->close();
 ?>
