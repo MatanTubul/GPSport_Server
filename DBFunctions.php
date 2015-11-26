@@ -59,8 +59,8 @@ class DBFunctions {
         return $result_q;
     }
 
-    function InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched,$repeat,$duration,$type,$val){
-        if($sched == true){
+    function InsertNewEvent($manager,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched,$repeat,$duration,$type,$val){
+        if($sched == "true"){
             if($type == "date"){
                 $sched_exp_type = "date";
                 $result = mysqli_query($this->con, "INSERT into events(manager_id,kind_of_sport,start_time,end_time,address,longitude,latitude,private,gender,min_age,max_participants,current_participants,scheduled,sched_type,sched_duration,sched_expired,sched_exp_type,event_status)
@@ -154,7 +154,7 @@ class DBFunctions {
     }
 
     function UpdateEventStatus($event_id){
-        $event_query = "UPDATE events SET events.event_status = '0' WHERE events.event_id = '$event_id'";
+        $event_query = "UPDATE events SET events.event_status = '-1' WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -227,12 +227,33 @@ class DBFunctions {
     //Update Profile
 
     //Update Event
-    function UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched)
+    function UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$current_participants,$sched,$repeat_type,$duration,$type,$val)
     {
-        $result = mysqli_query($this->con, "UPDATE events SET kind_of_sport = '$sport',start_time ='$s_time'
-        ,end_time = '$e_time',address ='$place',longitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
-        max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched'
-        WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
+        if($sched == "true") {
+            if ($type == "date") {
+                $sched_exp_type = "date";
+                $result = mysqli_query($this->con, "UPDATE events SET kind_of_sport = '$sport',start_time ='$s_time'
+                ,end_time = '$e_time',address ='$place',longitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
+                max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched', sched_type = '$repeat_type',sched_duration = '$duration',sched_exp_type = '$sched_exp_type',sched_expired = '$val'
+                WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
+
+
+            } else if ($type == "counter") {
+                $sched_exp_type = "counter";
+                $result = mysqli_query($this->con, "UPDATE events SET kind_of_sport = '$sport',start_time ='$s_time'
+                ,end_time = '$e_time',address ='$place',longitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
+                max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched', sched_type = '$repeat_type',sched_duration = '$duration',sched_exp_type = '$sched_exp_type',sched_counter = '$val'
+                WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
+            }
+        }
+        else{
+            $sched_exp_type = "update";
+            $result = mysqli_query($this->con, "UPDATE events SET kind_of_sport = '$sport',start_time ='$s_time'
+            ,end_time = '$e_time',address ='$place',longitude = '$lon',latitude = '$lat',private = '$event_type',gender = '$gen',min_age = '$min_age',
+            max_participants = '$max_p',current_participants = '$current_participants',scheduled = '$sched'
+            WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
+        }
+
         return $result;
     }
 

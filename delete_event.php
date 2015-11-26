@@ -21,8 +21,6 @@ class delete_event implements ResponseProcess {
         $event_id = $_POST["event_id"];
         $output["event_id"]= $event_id;
         $result_q = $dbF -> getEventByEventIdFromAttending($event_id);
-        /*$attending_query = "SELECT * from attending WHERE attending.event_id = '$event_id'";
-        $result_q = mysqli_query($dblink,$attending_query) or die (mysqli_error($dblink));*/
 
         if(!$result_q)
         {
@@ -39,8 +37,6 @@ class delete_event implements ResponseProcess {
                 $row = mysqli_fetch_assoc($result_q);
                 $user_id = $row["user_id"];
                 $result_q = $dbF ->UpdateEventManagerId($user_id,$event_id);
-               /* $event_query = "UPDATE event SET event.manager_id = '$user_id',event.current_participants = event.current_participants - 1  WHERE event.event_id = '$event_id'";
-                $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));*/
                 $affected_row = mysqli_affected_rows($dblink);
                 if(!$result_q)
                 {
@@ -54,8 +50,6 @@ class delete_event implements ResponseProcess {
                     $output["affected row"] = $affected_row;
                 }
                 $result_q = $dbF ->DeleteFromAttending($event_id,$user_id);
-                /*$del_query = "DELETE from attending WHERE attending.event_id = '$event_id' and attending.user_id = '$user_id'";
-                $result_q = mysqli_query($dblink,$del_query) or die (mysqli_error($dblink));*/
                 if(!$result_q)
                 {
                     $output["flag"]= "failed";
@@ -68,8 +62,6 @@ class delete_event implements ResponseProcess {
             }
             else{
                 $result_q = $dbF -> UpdateEventStatus($event_id);
-                /*$event_query = "UPDATE event SET event.event_status = '0' WHERE event.event_id = '$event_id'";
-                $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));*/
                 $affected_row = mysqli_affected_rows($dblink);
 
                 if(!$result_q)

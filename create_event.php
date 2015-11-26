@@ -34,7 +34,41 @@ class CreateEvent implements ResponseProcess {
         $place = $_POST["address"];
         $mode = $_POST["mode"];
 
+        if($sched == "true"){
+            $exp_val = "";
+            $type = "";
+            $repeat = $_POST["repeat"];
+            $duration = $_POST["duration"];
+            $expiration_tag = $_POST["sched_tag"];
+
+            switch($expiration_tag){
+                case "unlimited":{
+                    $exp_val = "unlimited";
+                    $type = $exp_val;
+                    break;
+                }
+                case "Year":{
+                    $exp_val = date("Y-m-d",strtotime($_POST["value"]));
+                    $type = "date";
+                    break;
+                }
+                case "events_number":
+                    $exp_val = $_POST["value"];
+                    $type = "counter";
+                    break;
+                case "by_date":
+                    $exp_val = date("Y-m-d",strtotime($_POST["value"]));
+                    $type = "date";
+                    break;
+            }
+            $output["repeat"] = $repeat;
+            $output["duration"] = $duration;
+            $output["exp_val"] = $exp_val;
+            $output["type"] = $type;
+        }
+
         if($mode == "edit"){
+
             $event_id = $_POST["event_id"];
 
             if(isset($_POST["invitedUsers"])){
@@ -44,64 +78,73 @@ class CreateEvent implements ResponseProcess {
                     $output["flag"]= "delete failed";
                     $output["msg"] = $result_q;
                     return json_encode($output);
-                }else{
+                }else {
                     $participants = $_POST["invitedUsers"];
                     $json_uesr_ids = json_decode($participants);
                     $output["json_users"] = $json_uesr_ids;
-                    $get_users_reg_ids = $dbF->getUserSByIds($json_uesr_ids,count($json_uesr_ids));
+                    $get_users_reg_ids = $dbF->getUserSByIds($json_uesr_ids, count($json_uesr_ids));
                     $reg_ids = array();
-                    $i=0;
-                    while($row_user = mysqli_fetch_assoc($get_users_reg_ids))
-                    {
+                    $i = 0;
+                    while ($row_user = mysqli_fetch_assoc($get_users_reg_ids)) {
                         $reg_ids[$i] = $row_user["gcm_id"];
                         $i++;
                     }
                     $output["ids"] = $reg_ids;
                     $output["size"] = count($json_uesr_ids);
 
-                   $result_q = $dbF -> InsertIntoAttendingUpdatedUsers($json_uesr_ids,$event_id,count($json_uesr_ids));
+                    $result_q = $dbF->InsertIntoAttendingUpdatedUsers($json_uesr_ids, $event_id, count($json_uesr_ids));
                     $output["insert_res"] = $result_q;
-                    if(!$result_q)
-                    {
-                        $output["flag"]= "update_insert failed";
+                    if (!$result_q) {
+                        $output["flag"] = "update_insert failed";
                         $output["msg"] = $result_q;
                         return json_encode($output);
-                    }else{
-                        $output["flag"]= "update_success";
+                    } else {
+                        $output["flag"] = "update_success";
                         $output["msg"] = $result_q;
                     }
                     //send notification on update to users
                     $gcm = new GCM();
                     $data = array();
-                    $message = "The event ".$sport." in ".$place." in ".$date." updated,Please click on Join in order to confirm registration.";
+                    $message = "The event " . $sport . " in " . $place . " in " . $date . " updated,Please click on Join in order to confirm registration.";
                     $data['message'] = $message;
                     $data['date'] = $date;
-                    $data['start_time'] = date("H:i",strtotime($s_time));
-                    $data['end_time'] = date("H:i",strtotime($e_time));
+                    $data['start_time'] = date("H:i", strtotime($s_time));
+                    $data['end_time'] = date("H:i", strtotime($e_time));
                     $data['inviter'] = $mng_name;
                     $data['event_id'] = $event_id;
                     $data['location'] = $place;
-                    $gcm_res = $gcm->send_notification($reg_ids,$data);
+                    $gcm_res = $gcm->send_notification($reg_ids, $data);
                     $output["gcm_res"] = $gcm_res;
                     //send notification on update to users
-
-                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched);
-                    $affected_row = mysqli_affected_rows($dblink);
-                    if(!$result_q)
-                    {
-                        $output["flag"]= "update_failed";
-                        $output["query_res"] = $result_q;
-                        $output["msg"] = "failed to update event";
-                        $output["affected row"] = $affected_row;
-                    }
-                    else{
-                        $output["flag"]= "update_success";
-                        $output["query_res"] = $result_q;
-                        $output["msg"] = "success to update event";
-                        $output["affected row"] = $affected_row;
-                    }
                 }
             }
+
+            $result_q = $dbF -> UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched,$output["repeat"],$output["duration"],$output["type"],$output["exp_val"]);
+            $output["res"] = $result_q;
+            $output["sched"] = $sched;
+
+            if($sched == "true")
+            {
+                $output["sched_res"] = "true";
+            }
+            else{
+                $output["sched_res"] = "false";
+            }
+            $affected_row = mysqli_affected_rows($dblink);
+            if(!$result_q)
+            {
+                $output["flag"]= "update_failed";
+                $output["query_res"] = $result_q;
+                $output["msg"] = "failed to update event";
+                $output["affected row"] = $affected_row;
+            }
+            else{
+                $output["flag"]= "update_success";
+                $output["query_res"] = $result_q;
+                $output["msg"] = "success to update event";
+                $output["affected row"] = $affected_row;
+            }
+
         }
         else{
 
@@ -119,39 +162,7 @@ class CreateEvent implements ResponseProcess {
                 if ($no_of_rows < 1) {
                     $output["flag"] = "success";
                     $output["msg"] = "insert event";
-                    $repeat = $_POST["repeat"];
-                    $duration = $_POST["duration"];
-                    $expiration_tag = $_POST["sched_tag"];
-                    $exp_val = "";
-                    $type = "";
-                    if($sched == "true"){
-
-                        switch($expiration_tag){
-                            case "unlimited":{
-                                $exp_val = "unlimited";
-                                $type = $exp_val;
-                                break;
-                            }
-                            case "Year":{
-                                $exp_val = date("Y-m-d",strtotime($_POST["value"]));
-                                $type = "date";
-                                break;
-                            }
-                            case "events_number":
-                                $exp_val = $_POST["value"];
-                                $type = "counter";
-                                break;
-                            case "by_date":
-                                $exp_val = date("Y-m-d",strtotime($_POST["value"]));
-                                $type = "date";
-                                break;
-                        }
-                        $output["repeat"] = $repeat;
-                        $output["duration"] = $duration;
-                        $output["exp_val"] = $exp_val;
-                    }
-
-                    $result = $dbF -> InsertNewEvent($manager,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched,$repeat,$duration,$type,$exp_val);
+                    $result = $dbF -> InsertNewEvent($manager,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched,$output["repeat"],$output["duration"],$output["type"],$output["exp_val"]);
                     if (!$result) {
                         $output["flag"] = "failed to create event";
                         // return (json_encode($output));
