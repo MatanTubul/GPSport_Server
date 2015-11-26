@@ -29,7 +29,7 @@ class search_events implements ResponseProcess{
 
         $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin('$user_lat' * 0.0175)
         + cos(events.latitude * 0.0175) * cos('$user_lat' * 0.0175) *
-        cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius' AND events.event_status = '0' AND events.private = 'false' AND events.event_date = '$today'";
+        cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius' AND events.event_status = '0' AND events.private = 'false' AND DATE(events.start_time) = '$today'";
         $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));
 
         if(!$result_q) {

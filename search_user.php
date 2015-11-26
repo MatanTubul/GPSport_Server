@@ -16,8 +16,6 @@ class SearchUser implements ResponseProcess{
         $output["flag"]="user found";
         $dbF = new DBFunctions($dblink);
         $result = $dbF -> SearchUserByName($name);
-       /* $query = "SELECT * FROM users WHERE users.fname LIKE '$name%'";
-        $result = mysqli_query($dblink,$query) or die (mysqli_error($dblink));*/
 
         if(!$result){
             $output["flag"] = "query failed";

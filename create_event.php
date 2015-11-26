@@ -85,7 +85,7 @@ class CreateEvent implements ResponseProcess {
                     $output["gcm_res"] = $gcm_res;
                     //send notification on update to users
 
-                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$date,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched);
+                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched);
                     $affected_row = mysqli_affected_rows($dblink);
                     if(!$result_q)
                     {
@@ -162,13 +162,14 @@ class CreateEvent implements ResponseProcess {
                         if(isset($_POST["jsoninvited"])){
 
                             $event_s_res = $dbF ->getEventIdByDateAndTime($date,$s_time,$e_time);
+                            $output["my_squery"] =$event_s_res;
 
                             if(!$event_s_res)
                             {
                                 $output["flag"] = "failed";
                                 $output["msg"] = "Event id not found";
                             }
-                            else{
+                           else{
                                 $row = mysqli_fetch_assoc($event_s_res);
                                 $no_of_rows = mysqli_num_rows($event_s_res);
                                 if($no_of_rows > 1 || $no_of_rows == 0)
