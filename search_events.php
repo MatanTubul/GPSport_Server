@@ -9,7 +9,8 @@
 include 'response_process.php';
 require_once 'DBFunctions.php';
 
-class search_events implements ResponseProcess{
+class search_events implements ResponseProcess
+{
 
     public function dataProcess($dblink)
     {
@@ -21,29 +22,59 @@ class search_events implements ResponseProcess{
         $radius = floatval($_POST["radius"]);
 
         date_default_timezone_set('Asia/Jerusalem');
-        $today = date('Y-m-d');
 
+        $current_time = date('Y-m-d H:i:s');
 
         $mng_id = $_POST["manager_id"];
         //$result_q = $dbF ->getEventsManagedById($mng_id);
 
         $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin('$user_lat' * 0.0175)
         + cos(events.latitude * 0.0175) * cos('$user_lat' * 0.0175) *
-        cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius' AND events.event_status = '0' AND events.private = 'false' AND DATE(events.start_time) = '$today'";
-        $result_q = mysqli_query($dblink,$event_query) or die (mysqli_error($dblink));
+        cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius'
+        AND events.event_status = '1' AND events.private = 'false' AND
+        DATE(events.start_time) = DATE('$current_time') AND
+        TIME(events.start_time) > TIME('$current_time')";
 
-        if(!$result_q) {
+        $result_q = mysqli_query($dblink, $event_query) or die (mysqli_error($dblink));
+
+        if (!$result_q) {
             $output["flag"] = "failed";
             $output["msg"] = $result_q;
 
-        }else{
+        } else {
             $output["flag"] = "success";
+            $output["time"] = $current_time;//test the time
             $events = array();
-            while($row = mysqli_fetch_assoc($result_q))
+            $i = 0;
+            while ($row = mysqli_fetch_assoc($result_q)) {
+                $participants = array();
+                $event_users = array();
+                if ($row["current_participants"] > 1) {
+                    $i++;
+                    $users_ids = $dbF->getUserIDByEvent($row["event_id"]);
+                    while ($row_participants = mysqli_fetch_assoc($users_ids)) {
+                        $participants[] = $row_participants["user_id"];
+                    }
+                    $users_details = $dbF->getUserSByIds($participants, count($participants));
+                    while ($row_users = mysqli_fetch_assoc($users_details)) {
+                        $event_users[] = $row_users;
+                    }
+
+                }
+                $row["event_users"] = $event_users;
+                $row["event_date"] = date("Y-m-d", strtotime($row["start_time"]));
+                $row["formatted_start_time"] = date("H:i", strtotime($row["start_time"]));
+                $row["formatted_end_time"] = date("H:i", strtotime($row["end_time"]));
                 $events[] = $row;
 
+            }
+
             $output["events"] = $events;
+            $output["iterations"] = $i;
+
         }
+
         return json_encode($output);
     }
 }
+
