@@ -89,7 +89,7 @@ switch ($tag){
     }
     case "search_events":
     {
-        include 'search_events.php';
+        include 'search_events_by_default.php';
         $searchevents = new search_events();
         echo($searchevents -> dataProcess($dblink));
         break;
