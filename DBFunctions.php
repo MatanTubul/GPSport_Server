@@ -289,7 +289,7 @@ class DBFunctions {
     function GetEventsByUserId($user_id){
         date_default_timezone_set('Asia/Jerusalem');
         $c_time = date("Y-m-d H:i:s");
-        $query = "SELECT DISTINCT events.* from events, (SELECT * from attending where user_id = '$user_id') as tmpatt WHERE events.manager_id = '$user_id' or (tmpatt.event_id = events.event_id and tmpatt.user_id = '$user_id') and '$c_time' <= events.start_time  GROUP by events.event_id";
+        $query = "SELECT DISTINCT events.* from events, (SELECT * from attending where user_id = '$user_id') as tmpatt WHERE (events.manager_id = '$user_id' or (tmpatt.event_id = events.event_id and tmpatt.user_id = '$user_id')) and '$c_time' <= events.start_time  GROUP by events.event_id";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
