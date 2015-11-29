@@ -135,7 +135,7 @@ class DBFunctions {
 
 
     //delete event
-    function  getEventByEventIdFromAttending($event_id){
+    function  getUserIdByEventIdFromAttending($event_id){
         $attending_query = "SELECT * from attending WHERE attending.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$attending_query) or die (mysqli_error($this->con));
         return $result_q;

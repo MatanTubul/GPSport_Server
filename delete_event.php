@@ -13,14 +13,12 @@ class delete_event implements ResponseProcess {
 
     public function dataProcess($dblink)
     {
-        /**
-         * need to fix the delete DB issue right now working but without DBFunctions class
-         */
+
         $output = array();
         $dbF = new DBFunctions($dblink);
         $event_id = $_POST["event_id"];
         $output["event_id"]= $event_id;
-        $result_q = $dbF -> getEventByEventIdFromAttending($event_id);
+        $result_q = $dbF -> getUserIdByEventIdFromAttending($event_id);
 
         if(!$result_q)
         {
