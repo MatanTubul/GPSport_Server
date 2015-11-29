@@ -94,6 +94,12 @@ switch ($tag){
         echo($searchevents -> dataProcess($dblink));
         break;
     }
+    case "get_participating_event_list":{
+        include_once "GetEventsByUser.php";
+        $getParticipantsInEvents = new GetEventsByUser();
+        echo($getParticipantsInEvents -> dataProcess($dblink));
+        break;
+    }
 
 
 //case others...
