@@ -74,6 +74,8 @@ class search_events implements ResponseProcess
 
         }
 
+
+
         return json_encode($output);
     }
 }
