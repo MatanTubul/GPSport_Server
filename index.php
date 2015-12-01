@@ -100,8 +100,13 @@ switch ($tag){
         echo($getParticipantsInEvents -> dataProcess($dblink));
         break;
     }
-
-
+    case "remove_event_manager":
+    {
+        require_once "delete_manager.php";
+        $rmv_manager = new delete_manager();
+        echo($rmv_manager ->dataProcess($dblink));
+        break;
+    }
 //case others...
 }
 

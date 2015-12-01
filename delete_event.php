@@ -77,7 +77,6 @@ class delete_event implements ResponseProcess {
                 $output["flag"]= "success";
                 $output["msg"] = $result_q;
             }
-            $output["second delete"] = $result_q;
         }
         return json_encode($output);
     }

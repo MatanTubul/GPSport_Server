@@ -101,7 +101,7 @@ class DBFunctions {
             else {
                 // and this one too
                 $query_users .= "users.mobile = '".$user."' ";
-               // $output["users"][] = $user['mobile'];
+                // $output["users"][] = $user['mobile'];
             }
             $i++;
             //$output["index"]=$i;
@@ -135,12 +135,6 @@ class DBFunctions {
 
 
     //delete event
-    function  getUserIdByEventIdFromAttending($event_id){
-        $attending_query = "SELECT * from attending WHERE attending.event_id = '$event_id'";
-        $result_q = mysqli_query($this->con,$attending_query) or die (mysqli_error($this->con));
-        return $result_q;
-    }
-
     function UpdateEventManagerId($user_id,$event_id){
         $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants - 1 WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
@@ -186,11 +180,11 @@ class DBFunctions {
     //invited_users
 
     //login
-        function UpdateUserStatus($user){
-            $result = mysqli_query($this->con,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'")
-            or die((mysqli_error($this->con)));
-            return $result;
-        }
+    function UpdateUserStatus($user){
+        $result = mysqli_query($this->con,"UPDATE users SET userStatus = '1' WHERE users.email= '$user'")
+        or die((mysqli_error($this->con)));
+        return $result;
+    }
     //login
 
     //register
@@ -286,10 +280,15 @@ class DBFunctions {
         or die (mysqli_error($this->con));
         return $result;
     }
-    function GetEventsByUserId($user_id){
+    function GetEventListFromEvents($user_id){
         date_default_timezone_set('Asia/Jerusalem');
         $c_time = date("Y-m-d H:i:s");
-        $query = "SELECT DISTINCT events.* from events, (SELECT * from attending where user_id = '$user_id') as tmpatt WHERE (events.manager_id = '$user_id' or (tmpatt.event_id = events.event_id and tmpatt.user_id = '$user_id')) and '$c_time' <= events.start_time  GROUP by events.event_id";
+        $query = "select * from events WHERE events.manager_id = '$user_id' and '$c_time' < events.start_time and events.event_status = '1'";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $result;
+    }
+    function GetEventListFromAttendingByUser($user_id){
+        $query = "SELECT events.* from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE 'approved'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
