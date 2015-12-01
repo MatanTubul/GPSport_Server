@@ -50,6 +50,7 @@ class get_events implements ResponseProcess{
                 $row["formatted_end_time"] = date("H:i",strtotime($row["end_time"]));
                 $events[] = $row;
             }
+            $output["iteratins"] = $i;
             $output["events"] = $events;
         }
         return json_encode($output);

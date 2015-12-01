@@ -293,6 +293,16 @@ class DBFunctions {
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
+    function GetParticipatingUserDetails($event_id){
+        $query = "SELECT  users.* FROM  users,(SELECT  attending.user_id  FROM  attending  WHERE  attending.event_id  = '$event_id') as  tmpatt  WHERE  tmpatt.user_id  =  users.id";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $result;
+    }
+    function DeleteEvent($event_id){
+        $query = "UPDATE events set event_status = '-1' WHERE events.event_id = '$event_id'";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $query;
+    }
 
 
 }
