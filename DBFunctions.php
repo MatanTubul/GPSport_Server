@@ -25,7 +25,7 @@ class DBFunctions {
         return $result;
     }
     function getUserIDByEvent($event_id){
-        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend'  or attending.status LIKE 'participate' )")
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend'  or attending.status LIKE 'participate' or attending.status LIKE 'awaiting reply' )")
         or die (mysqli_error($this->con));
         return $result;
     }
@@ -52,9 +52,8 @@ class DBFunctions {
     //create event
     function  checkIfEventIsExist($lon,$lat,$date,$s_time,$e_time){
         $query = "SELECT * FROM events WHERE (events.longitude = '$lon' AND events.latitude = '$lat')
-                AND DATE(events.start_time) = '$date' And ((events.start_time BETWEEN '$s_time' AND '$e_time')
-                OR (events.end_time BETWEEN '$s_time' AND '$e_time'))";
-
+                  AND DATE(events.start_time) = '$date'
+                  And (('$s_time' BETWEEN events.start_time AND events.end_time) OR ('$e_time' BETWEEN events.start_time AND events.end_time))";
         $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -135,8 +134,8 @@ class DBFunctions {
 
 
     //delete event
-    function UpdateEventManagerId($user_id,$event_id,$operation){
-        $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants'$operation' WHERE events.event_id = '$event_id'";
+    function UpdateEventManagerId($user_id,$event_id){
+        $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants-1 WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -171,8 +170,8 @@ class DBFunctions {
         return $result_q;
     }
 
-    function UpdateCurrentParticipants($event_id,$operation){
-        $event_query = "UPDATE events SET events.current_participants = events.current_participants'$operation' WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
+    function UpdateCurrentParticipants($event_id){
+        $event_query = "UPDATE events SET events.current_participants = events.current_participants+1 WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
         $result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_e_q;
     }
@@ -300,22 +299,29 @@ class DBFunctions {
     function DeleteEvent($event_id){
         $query = "UPDATE events set event_status = '-1' WHERE events.event_id = '$event_id'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
-        return $query;
+        return $result;
     }
     function UpdatePrivateEventWhenManagerIsLast($event_id){
         $query = "Update events set event_status = '2',events.current_participants='0' WHERE  events.event_id = '$event_id'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
-        return $query;
+        return $result;
     }
 
     function GetEventById($event_id){
         $query = "SELECT * from events WHERE events.event_id = '$event_id'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
-        return $query;
+        return $result;
     }
-    function UpdateDelayEvent($event_id){
-        $query = "UPDATE events set events.event_status = '1', events.current_participants = '1' WHERE events.event_id = '$event_id'";
+    function UpdateManagerInDelayEvent($event_id,$user_id){
+        $query = "UPDATE events set events.event_status = '1', events.current_participants = '1',events.manager_id = '$user_id' WHERE events.event_id = '$event_id'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
-        return $query;
+        return $result;
+    }
+    function  checkIfEventIsExistBeforeUpdate($lon,$lat,$date,$s_time,$e_time,$event_id){
+        $query = "SELECT * FROM events WHERE (events.longitude = '$lon' AND events.latitude = '$lat')
+                AND DATE(events.start_time) = '$date' And ((events.start_time BETWEEN '$s_time' AND '$e_time')
+                OR (events.end_time BETWEEN '$s_time' AND '$e_time'))AND events.event_id != '$event_id'";
+        $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
+        return $result_q;
     }
 }
