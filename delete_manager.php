@@ -70,21 +70,6 @@ class delete_manager implements ResponseProcess {
                         }
                     }
                 }
-               /* else{
-                    $result_q = $dbF -> UpdateEventStatus($event_id);
-                    $affected_row = mysqli_affected_rows($dblink);
-
-                    if(!$result_q)
-                    {
-                        $output["flag"]= "failed";
-                        $output["msg"] = $result_q;
-                        $output["affected row"] = $affected_row;
-                    }else{
-                        $output["flag"]= "success";
-                        $output["msg"] = $result_q;
-                        $output["affected row"] = $affected_row;
-                    }
-                }*/
             }
         }//end if current participants gt than 1
         else{
