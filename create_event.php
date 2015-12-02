@@ -122,6 +122,7 @@ class CreateEvent implements ResponseProcess {
                             $message = "The event " . $sport . " in " . $place . " in " . $date . " updated,Please click on Join in order to confirm registration.";
                             $data['message'] = $message;
                             $data['date'] = $date;
+                            $data['private'] = $event_type;
                             $data['start_time'] = date("H:i", strtotime($s_time));
                             $data['end_time'] = date("H:i", strtotime($e_time));
                             $data['inviter'] = $mng_name;
@@ -226,6 +227,7 @@ class CreateEvent implements ResponseProcess {
                                                 $data['start_time'] = date("H:i",strtotime($s_time));
                                                 $data['end_time'] = date("H:i",strtotime($e_time));
                                                 $data['inviter'] = $mng_name;
+                                                $data['private'] = $event_type;
                                                 $data['event_id'] = $event_id;
                                                 $data['location'] = $place;
                                                 $output["gcm_message"]=$data;

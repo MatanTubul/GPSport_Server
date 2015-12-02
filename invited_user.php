@@ -17,33 +17,62 @@ class invited_user implements ResponseProcess {
         $dbF = new DBFunctions($dblink);
         $user_id = $_POST['userId'];
         $event_id = $_POST['event_id'];
-        $status = "approve";
-
+        $event_mode = $_POST['private'];
+        $user_status = $_POST['userStatus'];
         $output["user_id"] =$user_id;
         $output["event_id"] = $event_id;
-        $result_q = $dbF ->UpdateUserchoiceIntoAttending($status,$event_id,$user_id);
-
-        $affected_row = mysqli_affected_rows($dblink);
-
+        $result_q = $dbF->GetEventById($event_id);
         if(!$result_q)
         {
             $output["flag"]= "update_failed";
             $output["msg"] = $result_q;
-            $output["affected row"] = $affected_row;
-
-        }else{
-            $output["flag"]= "updated";
-            $output["msg"] = $result_q;
-            $output["affected row"] = $affected_row;
-            $result_e_q = $dbF ->UpdateCurrentParticipants($event_id);
-
-            if(!$result_e_q){
-                $output["flag"]= "update_failed";
-                $output["msg"] = "failed to update event table";
-                $output["query_res"] = $result_e_q;
-            }
-
         }
+        else{
+            $myrow = mysqli_fetch_assoc($result_q);
+            if($myrow["current_participants"] > 1){
+                $result_q = $dbF ->UpdateUserchoiceIntoAttending($user_status,$event_id,$user_id);
+                $affected_row = mysqli_affected_rows($dblink);
+                if(!$result_q)
+                {
+                    $output["flag"]= "update_failed";
+                    $output["msg"] = $result_q;
+                    $output["affected row"] = $affected_row;
+
+                }else{
+                    if($user_status == "attend"){
+                        $result_e_q = $dbF ->UpdateCurrentParticipants($event_id,"+1");
+                        if(!$result_e_q){
+                            $output["flag"]= "update_failed";
+                            $output["msg"] = "failed to update event table";
+                            $output["query_res"] = $result_e_q;
+                        }
+                    }
+
+
+                }
+            }//end of if number of participants is bigger than 1
+            else{
+                $result_q = $dbF ->DeleteFromAttending($event_id,$user_id);
+                if(!$result_q)
+                {
+                    $output["flag"]= "failed";
+                    $output["msg"] = $result_q;
+                }
+                else{
+                    $result_q = $dbF ->UpdateDelayEvent($event_id);
+                    if(!$result_q)
+                    {
+                        $output["flag"]= "failed";
+                        $output["msg"] = $result_q;
+                    }else{
+                        $output["flag"]= "updated";
+                        $output["msg"] = $result_q;
+                    }
+                }
+            }//if number of participants smaller than 1
+
+        }//GetEventById query return true
+
         return json_encode($output);
     }
 }

@@ -25,7 +25,7 @@ class DBFunctions {
         return $result;
     }
     function getUserIDByEvent($event_id){
-        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id'")
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend'  or attending.status LIKE 'participate' )")
         or die (mysqli_error($this->con));
         return $result;
     }
@@ -135,8 +135,8 @@ class DBFunctions {
 
 
     //delete event
-    function UpdateEventManagerId($user_id,$event_id){
-        $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants - 1 WHERE events.event_id = '$event_id'";
+    function UpdateEventManagerId($user_id,$event_id,$operation){
+        $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants'$operation' WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -171,8 +171,8 @@ class DBFunctions {
         return $result_q;
     }
 
-    function UpdateCurrentParticipants($event_id){
-        $event_query = "UPDATE events SET events.current_participants = events.current_participants+1 WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
+    function UpdateCurrentParticipants($event_id,$operation){
+        $event_query = "UPDATE events SET events.current_participants = events.current_participants'$operation' WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
         $result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_e_q;
     }
@@ -303,7 +303,18 @@ class DBFunctions {
         return $query;
     }
     function UpdatePrivateEventWhenManagerIsLast($event_id){
-        $query = "Update events set event_status = '-1',events.current_participants='0' WHERE  events.event_id = '$event_id'";
+        $query = "Update events set event_status = '2',events.current_participants='0' WHERE  events.event_id = '$event_id'";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $query;
+    }
+
+    function GetEventById($event_id){
+        $query = "SELECT * from events WHERE events.event_id = '$event_id'";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $query;
+    }
+    function UpdateDelayEvent($event_id){
+        $query = "UPDATE events set events.event_status = '1', events.current_participants = '1' WHERE events.event_id = '$event_id'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $query;
     }
