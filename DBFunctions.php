@@ -319,9 +319,10 @@ class DBFunctions {
     }
     function  checkIfEventIsExistBeforeUpdate($lon,$lat,$date,$s_time,$e_time,$event_id){
         $query = "SELECT * FROM events WHERE (events.longitude = '$lon' AND events.latitude = '$lat')
-                AND DATE(events.start_time) = '$date' And ((events.start_time BETWEEN '$s_time' AND '$e_time')
-                OR (events.end_time BETWEEN '$s_time' AND '$e_time'))AND events.event_id != '$event_id'";
+                  AND DATE(events.start_time) = '$date'
+                  And (('$s_time' BETWEEN events.start_time AND events.end_time) OR ('$e_time' BETWEEN events.start_time AND events.end_time))AND events.event_id != '$event_id'";
         $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
         return $result_q;
     }
+
 }
