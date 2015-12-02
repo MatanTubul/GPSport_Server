@@ -18,7 +18,10 @@ class delete_manager implements ResponseProcess {
         $dbF = new DBFunctions($dblink);
         $event_id = $_POST["event_id"];
         $curr_participants = $_POST["current_participants"];
+        $userid = $_POST["user_id"];
+        $event_is_private = $_POST["event_is_private"];
         $output["event_id"]= $event_id;
+
         //if number of participants gt than 1
         if($curr_participants > 1){
             $result_q = $dbF -> getUserIDByEvent($event_id);
@@ -44,22 +47,30 @@ class delete_manager implements ResponseProcess {
                         $output["affected row"] = $affected_row;
 
                     }else{
-                        $output["flag"]= "success";
-                        $output["msg"] = "define new event manager";
-                        $output["affected row"] = $affected_row;
-                    }
-                    $result_q = $dbF ->DeleteFromAttending($event_id,$user_id);
-                    if(!$result_q)
-                    {
-                        $output["flag"]= "failed";
-                        $output["msg"] = $result_q;
-                    }else{
-                        $output["flag"]= "success";
-                        $output["msg"] = "deleted user from event";
-                    }
+                        $result_q = $dbF ->DeleteFromAttending($event_id,$user_id);
+                        if(!$result_q)
+                        {
+                            $output["flag"]= "failed";
+                            $output["msg"] = $result_q;
+                        }else{
+                            if($event_is_private == "true"){
+                                $users = array();
+                                $users[] = $userid;
+                                $result_q = $dbF ->InsertIntoAttendingUpdatedUsers($users,$event_id,count($users));
+                                if(!$result_q)
+                                {
+                                    $output["flag"]= "failed";
+                                    $output["msg"] = $result_q;
+                                }else{
+                                    $output["flag"]= "success";
+                                    $output["msg"] = "deleted user from event";
+                                }
 
+                            }
+                        }
+                    }
                 }
-                else{
+               /* else{
                     $result_q = $dbF -> UpdateEventStatus($event_id);
                     $affected_row = mysqli_affected_rows($dblink);
 
@@ -73,20 +84,33 @@ class delete_manager implements ResponseProcess {
                         $output["msg"] = $result_q;
                         $output["affected row"] = $affected_row;
                     }
+                }*/
+            }
+        }//end if current participants gt than 1
+        else{
+            if($event_is_private == "true"){
+                $result_q = $dbF ->UpdatePrivateEventWhenManagerIsLast($event_id);
+                if(!$result_q)
+                {
+                    $output["flag"]= "failed";
+                    $output["msg"] = $result_q;
+                }else {
+                    $output["flag"]= "success";
+                    $output["msg"] = $result_q;
                 }
+            }else{
+                $result_q = $dbF->DeleteEvent($event_id);
+                if(!$result_q)
+                {
+                    $output["flag"]= "failed";
+                    $output["msg"] = $result_q;
+                }else {
+                    $output["flag"]= "success";
+                    $output["msg"] = $result_q;
+                }
+            }
 
-            }
-        }else{
-            $result_q = $dbF->DeleteEvent($event_id);
-            if(!$result_q)
-            {
-                $output["flag"]= "failed";
-                $output["msg"] = $result_q;
-            }else {
-                $output["flag"]= "success";
-                $output["msg"] = $result_q;
-            }
-        }
+        }//case the event contain only 1 member.
 
         return json_encode($output);
    }

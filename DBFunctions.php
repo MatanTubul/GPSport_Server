@@ -114,7 +114,7 @@ class DBFunctions {
     function insertIntoAttendingTable($event_user_s_res,$event_id,$size_of_param){
         $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
         $i=0;
-        $status = "deny";
+        $status = "awaiting reply";
         $insert_query_res = array();
         $registration_ids = array();
         while($row_user = mysqli_fetch_assoc($event_user_s_res))
@@ -257,9 +257,9 @@ class DBFunctions {
         return $result_q;
     }
 
-    function InsertIntoAttendingUpdatedUsers($event_user_s_res,$event_id,$size_of_param){
+    function InsertIntoAttendingUpdatedUsers($event_user_s_res,$event_id,$size_of_param,$user_status){
         $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
-        $status = "deny";
+        $status = "awaiting reply";
         for($i=0;$i<$size_of_param;$i++)
         {
             if($i<$size_of_param - 1)
@@ -302,6 +302,9 @@ class DBFunctions {
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $query;
     }
-
-
+    function UpdatePrivateEventWhenManagerIsLast($event_id){
+        $query = "Update events set event_status = '-1',events.current_participants='0' WHERE  events.event_id = '$event_id'";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $query;
+    }
 }

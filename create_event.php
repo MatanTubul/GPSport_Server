@@ -84,9 +84,7 @@ class CreateEvent implements ResponseProcess {
                 }
 
                 if($mode == "edit"){
-
                     $event_id = $_POST["event_id"];
-
                     if(isset($_POST["invitedUsers"])){
                         $result_q = $dbF -> DeleteEventFromAttending($event_id);
                         if(!$result_q)
