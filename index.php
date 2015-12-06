@@ -96,17 +96,30 @@ switch ($tag){
     }
     case "get_participating_event_list":{
         include_once "GetEventsByUser.php";
-        $getParticipantsInEvents = new GetEventsByUser();
-        echo($getParticipantsInEvents -> dataProcess($dblink));
+        $getparticipantsinevents = new GetEventsByUser();
+        echo($getparticipantsinevents -> dataProcess($dblink));
         break;
     }
     case "remove_event_manager":
     {
         require_once "delete_manager.php";
-        $rmv_manager = new delete_manager();
-        echo($rmv_manager ->dataProcess($dblink));
+        $removemanager = new delete_manager();
+        echo($removemanager ->dataProcess($dblink));
         break;
     }
+
+    case "get_event_users":
+    {
+        require_once "get_event_users.php";
+        $eventusers = new get_event_users();
+        echo($eventusers ->dataProcess($dblink));
+        break;
+    }
+
+
+
+
+
 //case others...
 }
 

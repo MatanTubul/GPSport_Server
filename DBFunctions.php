@@ -24,11 +24,18 @@ class DBFunctions {
         or die (mysqli_error($this->con));
         return $result;
     }
-    function getUserIDByEvent($event_id){
-        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend'  or attending.status LIKE 'participate' or attending.status LIKE 'awaiting reply' )")
+    function getEventPotentialManagerIds($event_id){ // formally getUserIDByEvent
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend' or attending.status LIKE 'participate' or attending.status LIKE 'awaiting reply' )")
         or die (mysqli_error($this->con));
         return $result;
     }
+
+    function getEventIdsByAttendingTable($event_id){
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id'")
+        or die (mysqli_error($this->con));
+        return $result;
+    }
+
     function getUserSByIds($user_ids,$size){
         $query_users = "SELECT * From users WHERE ";
         $i=0;
@@ -303,6 +310,18 @@ class DBFunctions {
     }
     function UpdatePrivateEventWhenManagerIsLast($event_id){
         $query = "Update events set event_status = '2',events.current_participants='0' WHERE  events.event_id = '$event_id'";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $result;
+    }
+
+    function GetEventUsers($event_id){
+        $query = "SELECT users.id ,users.fname,users.image, attending.status FROM users,attending WHERE attending.event_id = '$event_id' AND users.id = attending.user_id";
+        $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
+        return $result;
+    }
+
+    function GetEventManager($event_id){
+        $query = "SELECT users.id ,users.fname,users.image,events.event_status FROM users, events WHERE events.event_id = '$event_id' AND users.id = events.manager_id";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
