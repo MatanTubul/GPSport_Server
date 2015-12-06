@@ -33,7 +33,7 @@ class SearchUser implements ResponseProcess{
                     $img_path = "images/".$row["image"];
 
                     $imgdata = base64_encode(file_get_contents($img_path));
-                    $output["users"][] =  array("id" =>$row["id"],"name"=> $row["fname"],"email"=> $row["email"],"mobile" => $row["mobile"],"image" => $imgdata);
+                    $output["users"][] =  array("id" =>$row["id"],"name"=> $row["fname"],"email"=> $row["email"],"mobile" => $row["mobile"],"image" => $imgdata, "gender" => $row["gender"],"age" => $row["age"]);
                 }
             }
         }
