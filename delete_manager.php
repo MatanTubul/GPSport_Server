@@ -24,7 +24,7 @@ class delete_manager implements ResponseProcess {
 
         //if number of participants gt than 1
         if($curr_participants > 1){
-            $result_q = $dbF -> getUserIDByEvent($event_id);
+            $result_q = $dbF -> getEventPotentialManagerIds($event_id);
             if(!$result_q)
             {
                 $output["flag"]= "failed";
