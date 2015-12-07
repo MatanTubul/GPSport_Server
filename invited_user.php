@@ -51,9 +51,6 @@ class invited_user implements ResponseProcess {
                             $output["msg"] = $result_q;
                         }
                     }
-
-
-
                 }
             }//end of if number of participants is bigger than 1
             else{
