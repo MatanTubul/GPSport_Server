@@ -33,7 +33,7 @@ class get_events implements ResponseProcess{
                 $event_users = array();
                 if($row["current_participants"] > 1){
                     $i++;
-                    $users_ids = $dbF ->getEventPotentialManagerIds($row["event_id"]);
+                    $users_ids = $dbF ->getEventIdsByAttendingTable($row["event_id"]);
                     while($row_participants = mysqli_fetch_assoc($users_ids))
                     {
                         $participants[] = $row_participants["user_id"];
