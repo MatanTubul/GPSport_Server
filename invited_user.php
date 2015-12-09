@@ -54,7 +54,7 @@ class invited_user implements ResponseProcess {
                 }
             }//end of if number of participants is bigger than 1
             else{
-                $result_q = $dbF ->DeleteFromAttending($event_id,$user_id);
+                $result_q = $dbF ->DeleteUserFromAttending($event_id,$user_id);
                 if(!$result_q)
                 {
                     $output["flag"]= "failed";

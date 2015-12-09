@@ -147,7 +147,7 @@ class DBFunctions {
         return $result_q;
     }
 
-    function DeleteFromAttending($event_id,$user_id){
+    function DeleteUserFromAttending($event_id,$user_id){
         $del_query = "DELETE from attending WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'";
         $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
         return $result_q;
@@ -294,7 +294,7 @@ class DBFunctions {
         return $result;
     }
     function GetEventListFromAttendingByUser($user_id){
-        $query = "SELECT events.* from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE 'approved'";
+        $query = "SELECT events.* from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE 'attend'";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
@@ -336,12 +336,20 @@ class DBFunctions {
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
-    function  checkIfEventIsExistBeforeUpdate($lon,$lat,$date,$s_time,$e_time,$event_id){
+    function  checkIfEventIsExistBeforeUpdate($lon,$lat,$date,$s_time,$e_time,$event_id)
+    {
         $query = "SELECT * FROM events WHERE (events.longitude = '$lon' AND events.latitude = '$lat')
                   AND DATE(events.start_time) = '$date'
                   And (('$s_time' BETWEEN events.start_time AND events.end_time) OR ('$e_time' BETWEEN events.start_time AND events.end_time))AND events.event_id != '$event_id'";
-        $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
+        $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
         return $result_q;
     }
+    function UpdateCurrentParticipantsInEvent($event_id,$val){
+        $query = "UPDATE events SET events.current_participants = '$val' WHERE events.event_id = '$event_id'";
+        $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
+        return $result_q;
+    }
+
+
 
 }

@@ -107,6 +107,13 @@ switch ($tag){
         echo($removemanager ->dataProcess($dblink));
         break;
     }
+    case "remove_participant":
+    {
+        require_once "remove_participant.php";
+        $remove_participant = new remove_participant();
+        echo($remove_participant ->dataProcess($dblink));
+        break;
+    }
 
     case "get_event_users":
     {

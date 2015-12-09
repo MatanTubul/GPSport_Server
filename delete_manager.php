@@ -47,7 +47,7 @@ class delete_manager implements ResponseProcess {
                         $output["affected row"] = $affected_row;
 
                     }else{
-                        $result_q = $dbF ->DeleteFromAttending($event_id,$user_id);
+                        $result_q = $dbF ->DeleteUserFromAttending($event_id,$user_id);
                         if(!$result_q)
                         {
                             $output["flag"]= "failed";
