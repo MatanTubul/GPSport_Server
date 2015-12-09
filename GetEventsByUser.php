@@ -18,6 +18,7 @@ class GetEventsByUser implements ResponseProcess {
         $result_q_attending = $dbF ->GetEventListFromAttendingByUser($user_id);
         $result_q_events = $dbF -> GetEventListFromEvents($user_id);
 
+
          if($result_q_attending == false || $result_q_events == false )
          {
              $output["flag"] = "failed";
