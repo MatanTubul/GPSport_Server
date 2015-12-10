@@ -122,9 +122,13 @@ switch ($tag){
         echo($eventusers ->dataProcess($dblink));
         break;
     }
-
-
-
+    case "retrieve_invitations":
+    {
+        require_once "get_invitations.php";
+        $getInvitations = new get_invitations();
+        echo($getInvitations->dataProcess($dblink));
+        break;
+    }
 
 
 //case others...

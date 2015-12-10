@@ -95,7 +95,7 @@ class delete_manager implements ResponseProcess {
                 }
             }
 
-        }//case the event contain only 1 member.
+        }//case the event contain only 1 member or less.
 
         return json_encode($output);
    }

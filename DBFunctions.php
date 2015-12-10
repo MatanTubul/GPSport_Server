@@ -12,8 +12,6 @@ include_once 'connection.php';
 class DBFunctions {
 
     private $con;
-
-
     function __construct($dblink){
         $this ->con = $dblink;
 
@@ -266,8 +264,8 @@ class DBFunctions {
      */
     function UpdateCurrentParticipants($event_id){
         $event_query = "UPDATE events SET events.current_participants = events.current_participants+1 WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
-        $result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
-        return $result_e_q;
+        //$result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
+        return $event_query;
     }
 
     //invited_users
@@ -589,6 +587,14 @@ class DBFunctions {
         return $result_q;
     }
 
-
-
+    /**
+     * query which retrieve all the invitations that sent and still active to a specific user
+     * @param $user_id
+     * @return bool|mysqli_result
+     */
+    function getEventsInvitationsListByUserId($user_id){
+        $query = "SELECT events.* from attending,events WHERE attending.user_id = '$user_id' and (attending.event_id = events.event_id and (events.event_status = '1' or events.event_status = '2'))";
+        $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
+        return $result_q;
+    }
 }
