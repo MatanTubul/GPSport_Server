@@ -67,6 +67,13 @@ class CreateEvent implements ResponseProcess {
 
         if($mode == "edit"){
             $event_id = $_POST["event_id"];
+            $invited_users_size = 0;
+            if(isset($_POST["invitedUsers"])){
+                $participants = $_POST["invitedUsers"];
+                $json_uesr_ids = json_decode($participants);
+                $invited_users_size = count($json_uesr_ids);
+            }
+
             if(isset($_POST["invitedUsers"])){
                 $result_q = $dbF -> DeleteEventFromAttending($event_id);
                 if(!$result_q)
@@ -87,6 +94,7 @@ class CreateEvent implements ResponseProcess {
                     }
                     $output["ids"] = $reg_ids;
                     $output["size"] = count($json_uesr_ids);
+
 
                     $result_q = $dbF->InsertIntoAttendingUpdatedUsers($json_uesr_ids, $event_id, count($json_uesr_ids));
                     $output["insert_res"] = $result_q;
@@ -128,7 +136,7 @@ class CreateEvent implements ResponseProcess {
                     $output["flag"] = "failed";
                     $output["msg"] = "Place is already occupied in this time";
                 }else{
-                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$sched,$output["repeat"],$output["duration"],$output["type"],$output["exp_val"]);
+                    $result_q = $dbF -> UpdateEvent($event_id,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,'1',$invited_users_size,$sched,$output["repeat"],$output["duration"],$output["type"],$output["exp_val"]);
                     $output["res"] = $result_q;
                     $output["sched"] = $sched;
 
@@ -177,7 +185,15 @@ class CreateEvent implements ResponseProcess {
                 }else{
                     $output["flag"] = "success";
                     $output["msg"] = "insert event";
-                    $result = $dbF -> InsertNewEvent($manager,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$sched,$output["repeat"],$output["duration"],$output["type"],$output["exp_val"]);
+                    $num_of_invited_users = 0;
+                    if(isset($_POST["jsoninvited"])){
+                        $json = $_POST["jsoninvited"];
+                        $json = json_decode($json);
+                        $num_of_invited_users = (count($json));
+                        $output["size_invited"] = count($json);
+                    }
+
+                    $result = $dbF -> InsertNewEvent($manager,$sport,$s_time,$e_time,$place,$lon,$lat,$event_type,$gen,$min_age,$max_p,$num_of_invited_users,$sched,$output["repeat"],$output["duration"],$output["type"],$output["exp_val"]);
                     if (!$result) {
                         $output["flag"] = "failed to create event";
                         // return (json_encode($output));
