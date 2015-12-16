@@ -15,7 +15,7 @@ class GetEventsByUser implements ResponseProcess {
         $output = array();
         $dbF = new DBFunctions($dblink);
         $user_id = $_POST["user_id"];
-        $result_q_attending = $dbF ->GetEventListFromAttendingByUser($user_id);
+        $result_q_attending = $dbF ->GetEventListFromAttendingByUser($user_id,"attend");
         $result_q_events = $dbF -> GetEventListFromEvents($user_id);
 
 

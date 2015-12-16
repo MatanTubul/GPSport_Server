@@ -472,10 +472,12 @@ class DBFunctions {
     /**
      * query which retrieve all the events id which related to $user_id
      * @param $user_id
+     * @param $status
      * @return bool|mysqli_result
      */
-    function GetEventListFromAttendingByUser($user_id){
-        $query = "SELECT events.* from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE 'attend'";
+    function GetEventListFromAttendingByUser($user_id,$status){
+        $user_status = $status;
+        $query = "SELECT events.* from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE '$user_status' and (events.event_status = '1' or events.event_status = '2')";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }

@@ -16,7 +16,12 @@ class get_invitations implements ResponseProcess {
         $output = array();
         $user_id = $_POST["user_id"];
         $dbF = new DBFunctions($dblink);
-        $result = $dbF->getEventsInvitationsListByUserId($user_id);
+        if(isset($_POST["list_type"])){
+            $result = $dbF->GetEventListFromAttendingByUser($user_id,"waiting");
+        }else{
+            $result = $dbF->getEventsInvitationsListByUserId($user_id);
+        }
+
         $output["query"] = $result;
        if (!$result) {
             $output["flag"] = "failed";
@@ -26,13 +31,22 @@ class get_invitations implements ResponseProcess {
             $output["flag"] = "success";
             $invitations = array();
             //For both private and public event first go to attending table and get the ids according to the event_id
-            while ($row_user = mysqli_fetch_assoc($result)) {
-                $row_user["event_date"] = date("Y-m-d",strtotime($row_user["start_time"]));
-                $row_user["formatted_start_time"] = date("H:i",strtotime($row_user["start_time"]));
-                $row_user["formatted_end_time"] = date("H:i",strtotime($row_user["end_time"]));
-                $invitations[] = $row_user;
-            }
-            $output["invitations"] = $invitations;
+           $no_of_rows = mysqli_num_rows($result);
+           $output["numofrows"] = $no_of_rows;
+           if($no_of_rows > 0)
+           {
+               while ($row_user = mysqli_fetch_assoc($result)) {
+                   $row_user["event_date"] = date("Y-m-d",strtotime($row_user["start_time"]));
+                   $row_user["formatted_start_time"] = date("H:i",strtotime($row_user["start_time"]));
+                   $row_user["formatted_end_time"] = date("H:i",strtotime($row_user["end_time"]));
+                   $invitations[] = $row_user;
+               }
+               $output["events"] = $invitations;
+           }
+           else{
+               $output["msg"] = "No events was Found";
+           }
+
         }
         return json_encode($output);
     }
