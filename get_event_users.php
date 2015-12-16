@@ -32,6 +32,7 @@ class get_event_users implements ResponseProcess{
                 $output["msg"] = $events_users;
             }
             else {
+            $output["flag"] = "success";
                 $event_users = array();
                 //For both private and public event first go to attending table and get the ids according to the event_id
                 while ($row_user = mysqli_fetch_assoc($events_users)) {
