@@ -15,9 +15,9 @@ class invited_user implements ResponseProcess {
     {
         $output = array();
         $dbF = new DBFunctions($dblink);
-        $user_id = $_POST['userId'];
+        $user_id = $_POST['user_id'];
         $event_id = $_POST['event_id'];
-        $user_status = $_POST['userStatus'];
+        $user_status = $_POST['user_status'];
         $output["user_id"] =$user_id;
         $output["event_id"] = $event_id;
         $result_q = $dbF->GetEventById($event_id);
@@ -30,7 +30,7 @@ class invited_user implements ResponseProcess {
             $myrow = mysqli_fetch_assoc($result_q);
             $output["curr"] = $myrow["current_participants"];
             if($myrow["current_participants"] >= 1){
-                $result_q = $dbF ->UpdateUserchoiceIntoAttending($user_status,$event_id,$user_id);
+                $result_q = $dbF ->UpdateUserChoiceIntoAttending($user_status,$event_id,$user_id);
                 $affected_row = mysqli_affected_rows($dblink);
                 if(!$result_q)
                 {
@@ -40,7 +40,7 @@ class invited_user implements ResponseProcess {
 
                 }else{
                     if($user_status == "attend"){
-                        $result_e_q = $dbF ->UpdateCurrentParticipants($event_id);
+                        $result_e_q = $dbF ->updateEventUsersCounting($event_id, "current_participants", "inc");
                         if(!$result_e_q){
                             $output["flag"]= "update_failed";
                             $output["msg"] = "failed to update event table";

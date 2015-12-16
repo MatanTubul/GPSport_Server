@@ -34,7 +34,7 @@ class DBFunctions {
      * @return bool|mysqli_result
      */
     function getEventPotentialManagerIds($event_id){ // formally getUserIDByEvent
-        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend' or attending.status LIKE 'participate' or attending.status LIKE 'awaiting reply' )")
+        $result = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' and (attending.status LIKE 'attend' or attending.status LIKE 'participate' )")
         or die (mysqli_error($this->con));
         return $result;
     }
@@ -123,7 +123,19 @@ class DBFunctions {
         return $result;
     }
 
-    /**
+
+
+    function insertNewPublicParticipate($event_id, $user_id, $status)
+    {
+        $query = "INSERT into attending(event_id, user_id, status) VALUES ('$event_id','$user_id','$status')";
+        $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
+        return $result_q;
+
+
+    }
+
+
+        /**
      * query which get event id by date start time and end time.
      * @param $date
      * @param $s_time
@@ -200,7 +212,7 @@ class DBFunctions {
      * @return bool|mysqli_result
      */
     function UpdateEventManagerId($user_id,$event_id){
-        $event_query = "UPDATE events SET events.manager_id = '$user_id',events.current_participants = events.current_participants-1 WHERE events.event_id = '$event_id'";
+        $event_query = "UPDATE events SET events.manager_id = '$user_id' WHERE events.event_id = '$event_id'";
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
@@ -212,10 +224,41 @@ class DBFunctions {
      * @return bool|mysqli_result
      */
     function DeleteUserFromAttending($event_id,$user_id){
+
+        $userIdInEvent = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'") or die (mysqli_error($this->con));
+        $row = mysqli_fetch_assoc($userIdInEvent);
+        $userStatus = $row["status"];
+
         $del_query = "DELETE from attending WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'";
         $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
-        return $result_q;
+        if (!$result_q)
+            return null;
+
+        return $userStatus;
     }
+
+function ChangeStatusForAWaitingUser ($event_id){
+    $eventDetails = mysqli_query($this ->con,"SELECT * from events WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
+    if (!$eventDetails)
+        return null;
+    $event_row = mysqli_fetch_assoc($eventDetails);
+    if (($event_row["max_participants"] == $event_row["current_participants"]) AND ($event_row["current_waiting"] != 0))
+    {
+        $waitingUsersInEvent = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' AND attending.status = 'waiting'")or die (mysqli_error($this->con));
+        if (!$waitingUsersInEvent)
+            return null;
+        $some_random_user_row = mysqli_fetch_assoc($waitingUsersInEvent);
+        $user_id = $some_random_user_row["user_id"];
+        $update_status = mysqli_query($this ->con,"UPDATE attending SET attending.status = 'participate' WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'")or die (mysqli_error($this->con));
+        if (!$update_status)
+            return null;
+        return "changed";
+    }
+    return "not_changed";
+}
+
+
+
 
     /**
      * query which updating event status.
@@ -251,7 +294,7 @@ class DBFunctions {
      * @param $user_id
      * @return bool|mysqli_result
      */
-    function UpdateUserchoiceIntoAttending($status,$event_id,$user_id){
+    function UpdateUserChoiceIntoAttending($status,$event_id,$user_id){
         $query = "UPDATE attending SET attending.status = '$status' WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'";
         $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
         return $result_q;
@@ -262,10 +305,18 @@ class DBFunctions {
      * @param $event_id
      * @return bool|mysqli_result
      */
-    function UpdateCurrentParticipants($event_id){
-        $event_query = "UPDATE events SET events.current_participants = events.current_participants+1 WHERE events.event_id = '$event_id' AND (events.max_participants > events.current_participants)";
-        //$result_e_q  = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
-        return $event_query;
+    function updateEventUsersCounting($event_id, $fieldName, $command)
+    {
+        if ($command == "inc")
+            if ($fieldName == "current_participants")
+                $event_query = "UPDATE events SET events.$fieldName = events.$fieldName + 1 WHERE events.event_id = '$event_id'AND (events.max_participants > events.$fieldName)";
+            else
+                $event_query = "UPDATE events SET events.$fieldName = events.$fieldName + 1 WHERE events.event_id = '$event_id'AND (5 > events.$fieldName)";
+        else
+            $event_query = "UPDATE events SET events.$fieldName = events.$fieldName - 1 WHERE events.event_id = '$event_id'AND (0 < events.$fieldName)";
+        $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
+        return $result_q;
+
     }
 
     //invited_users

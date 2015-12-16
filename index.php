@@ -129,7 +129,13 @@ switch ($tag){
         echo($getInvitations->dataProcess($dblink));
         break;
     }
-
+    case "participate_user":
+    {
+        require_once "add_participant.php";
+        $participateInPublicEvent = new add_participant();
+        echo($participateInPublicEvent->dataProcess($dblink));
+        break;
+    }
 
 //case others...
 }
