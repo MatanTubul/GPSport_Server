@@ -56,7 +56,7 @@ class get_events implements ResponseProcess{
                 $output["iteratins"] = $i;
                 $output["events"] = $events;
             }else{
-                $output["msg"] = "No events was Found";
+                $output["msg"] = "Events was not found";
             }
 
         }

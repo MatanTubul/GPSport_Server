@@ -44,7 +44,7 @@ class get_invitations implements ResponseProcess {
                $output["events"] = $invitations;
            }
            else{
-               $output["msg"] = "No events was Found";
+               $output["msg"] = "Events was not found";
            }
 
         }

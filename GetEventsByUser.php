@@ -29,8 +29,9 @@ class GetEventsByUser implements ResponseProcess {
              $no_of_rows_events = mysqli_num_rows($result_q_events);
              $output["no_rows_events"] = $no_of_rows_events;
              $output["no_rows_attending"] = $no_of_rows_att;
+             $output["numofrows"] = $no_of_rows_att+$no_of_rows_events;
              if($no_of_rows_att < 1 && $no_of_rows_events < 1){
-                 $output["msg"] = "events not found";
+                 $output["msg"] = "Events was not found";
                  $output["flag"] = "success";
              }else{
                  $events = array();
