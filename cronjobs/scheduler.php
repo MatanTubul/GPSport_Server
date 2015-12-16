@@ -88,10 +88,24 @@ else {
                                                END)
                      WHERE events.scheduled = '1' and events.event_status = '0' ";
 }
-    echo $sched_query."<br/>";
     $res_sched_query = mysqli_query($dblink, $sched_query) or die (mysqli_error($dblink));
-    echo "<br/>".$res_sched_query."<br/>";
     $affected_row = mysqli_affected_rows($dblink);
-    echo $affected_row."<br/";
+
+if (!$res_sched_query) {
+    $logmessage = $c_time . ":failed to update event!";
+} else {
+    $logmessage = $c_time . "  :event updated successfully numbers of rows that affected:".$affected_row;
+}
+
+$filename = "scheduler_log.txt";
+if(file_exists($filename)) {
+    file_put_contents($filename, $logmessage."\n",FILE_APPEND);
+    echo "append";
+} else {
+    $handle = fopen($filename, 'w+') or die("Unable to open file!");
+    fwrite($handle, $logmessage);
+    fclose($handle);
+    echo "create";
+}
 $dblink ->close();
 ?>

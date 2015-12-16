@@ -48,9 +48,9 @@ define ('myDB','1934398_gpsport');
             fclose($handle);
             echo "create";
         }
-        $query_sched = "UPDATE events SET events.start_time = DATE_ADD(events.start_time, interval 7 day)";
+        /*$query_sched = "UPDATE events SET events.start_time = DATE_ADD(events.start_time, interval 7 day)";
         $res = mysqli_query($dblink, $query_sched) or die (mysqli_error($dblink));
         echo "<br/".$res;
-        //' ' WHERE EXISTS (SELECT * FROM events WHERE ) "
+        //' ' WHERE EXISTS (SELECT * FROM events WHERE ) "*/
     $dblink ->close();
 ?>
