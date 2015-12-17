@@ -475,12 +475,11 @@ function ChangeStatusForAWaitingUser ($event_id){
      * @param $event_user_s_res
      * @param $event_id
      * @param $size_of_param
-     * @param $user_status
+     * @param $status
      * @return mixed
      */
-    function InsertIntoAttendingUpdatedUsers($event_user_s_res,$event_id,$size_of_param){
+    function InsertIntoAttendingUpdatedUsers($event_user_s_res,$event_id,$size_of_param, $status){
         $insert_query = "INSERT into attending (event_id,user_id,status) VALUES ";
-        $status = "awaiting reply";
         for($i=0;$i<$size_of_param;$i++)
         {
             if($i<$size_of_param - 1)

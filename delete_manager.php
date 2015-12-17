@@ -65,7 +65,7 @@ class delete_manager implements ResponseProcess {
                                     } else {
                                         $users = array();
                                         $users[] = $userid;
-                                        $result_q = $dbF->InsertIntoAttendingUpdatedUsers($users, $event_id, count($users));
+                                        $result_q = $dbF->InsertIntoAttendingUpdatedUsers($users, $event_id, count($users),"not attend");
                                         if (!$result_q) {
                                             $output["flag"] = "failed";
                                             $output["msg"] = $result_q;

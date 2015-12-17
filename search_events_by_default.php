@@ -25,13 +25,10 @@ class search_events implements ResponseProcess
 
         $current_time = date('Y-m-d H:i:s');
 
-        $mng_id = $_POST["manager_id"];
-        //$result_q = $dbF ->getEventsManagedById($mng_id);
-
         $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin('$user_lat' * 0.0175)
         + cos(events.latitude * 0.0175) * cos('$user_lat' * 0.0175) *
         cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius'
-        AND events.event_status = '1' AND
+        AND (events.event_status = '1' OR events.event_status = '2' ) AND
         DATE(events.start_time) = DATE('$current_time') AND
         TIME(events.start_time) > TIME('$current_time')";
 

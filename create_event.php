@@ -96,7 +96,7 @@ class CreateEvent implements ResponseProcess {
                     $output["size"] = count($json_uesr_ids);
 
 
-                    $result_q = $dbF->InsertIntoAttendingUpdatedUsers($json_uesr_ids, $event_id, count($json_uesr_ids));
+                    $result_q = $dbF->InsertIntoAttendingUpdatedUsers($json_uesr_ids, $event_id, count($json_uesr_ids),"awaiting reply");
                     $output["insert_res"] = $result_q;
                     if (!$result_q) {
                         $output["flag"] = "update_insert failed";
