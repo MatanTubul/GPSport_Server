@@ -217,11 +217,17 @@ class DBFunctions {
         return $result_q;
     }
 
+    function isPrevManager($event_id, $user_id)
+    {
+
+
+
+    }
     /**
      * query which delete user from attending table
      * @param $event_id
      * @param $user_id
-     * @return bool|mysqli_result
+     * @return $userStatus - status of deleted user
      */
     function DeleteUserFromAttending($event_id,$user_id){
 
