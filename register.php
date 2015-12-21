@@ -42,6 +42,8 @@ class Register implements ResponseProcess{
         }
         $no_of_rows1 = mysqli_num_rows($result1);
         $no_of_rows2 = mysqli_num_rows($result2);
+        $output["usercheck"] = "true";
+        $output["mobilecheck"] = "true";
         if ($no_of_rows1 == 1) {
             $output["usercheck"] = "user already exists";       //user already exists
             $output["flag"] = "wrong input";
