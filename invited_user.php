@@ -53,41 +53,46 @@ class invited_user implements ResponseProcess {
                     }
                 }
             }//end of if number of participants is bigger than 1
-            else{//number of participants is zero -> you are the first to attend -> you are the manager
+            else {//number of participants is zero -> you are the first to attend -> you are the manager
 
-                //TO DO:
                 //check if the first user who wants to participate is the previous manager
-                //if so just change number of participants and update the event status
-                //$result_q = $dbF->UpdateManagerInDelayEvent($event_id, $user_id);//update new (prev) manager in events table
-
-                $result_q = $dbF ->DeleteUserFromAttending($event_id,$user_id); //delete from attending table
-                if(!$result_q)
-                {
-                    $output["flag"]= "failed";
+                $result_q = $dbF->GetEventManager($event_id);
+                if (!$result_q) {
+                    $output["flag"] = "failed";
                     $output["msg"] = $result_q;
-                }
-                else{
-                    $result_q = $dbF ->GetEventManager($event_id); //get event current manager id
-                    if(!$result_q)
-                    {
-                        $output["flag"]= "failed";
-                        $output["msg"] = $result_q;
-                    }
-                    else {
-                        $mng_row = mysqli_fetch_assoc($result_q);
-                        $mng_id = $mng_row["id"];
-                        $result_q = $dbF->insertNewPublicParticipate($event_id, $mng_id, "not attend"); //insert previous manager into attending table
+                } else {
+                    $mng_row = mysqli_fetch_assoc($result_q);
+                    $mng_id = $mng_row["id"];
+                //if so just change number of participants and update the event status
+                    if ($mng_id == $user_id ) {
+                        $result_q = $dbF->UpdateManagerInDelayEvent($event_id, $user_id);//update new (prev) manager in events table
                         if (!$result_q) {
                             $output["flag"] = "failed";
                             $output["msg"] = $result_q;
                         } else {
-                            $result_q = $dbF->UpdateManagerInDelayEvent($event_id, $user_id);//update new manager in events table
+                            $output["flag"] = "updated";
+                            $output["msg"] = $result_q;
+                        }
+                    }
+                    else {
+                        $result_q = $dbF->DeleteUserFromAttending($event_id, $user_id); //delete from attending table
+                        if (!$result_q) {
+                            $output["flag"] = "failed";
+                            $output["msg"] = $result_q;
+                        } else {
+                            $result_q = $dbF->insertNewPublicParticipate($event_id, $mng_id, "not attend"); //insert previous manager into attending table
                             if (!$result_q) {
                                 $output["flag"] = "failed";
                                 $output["msg"] = $result_q;
                             } else {
-                                $output["flag"] = "updated";
-                                $output["msg"] = $result_q;
+                                $result_q = $dbF->UpdateManagerInDelayEvent($event_id, $user_id);//update new manager in events table
+                                if (!$result_q) {
+                                    $output["flag"] = "failed";
+                                    $output["msg"] = $result_q;
+                                } else {
+                                    $output["flag"] = "updated";
+                                    $output["msg"] = $result_q;
+                                }
                             }
                         }
                     }
