@@ -13,8 +13,6 @@ define ('myDB','1934398_gpsport');
 define ("GOOGLE_API_KEY","AIzaSyBSGW3kNZ_GNsBsTdJBKsyAbcTfaqv3uvo");
 
 $dblink = mysqli_connect(mysql_host, mysql_user, mysql_password,myDB);
-
-
 if (!$dblink)
 {
     $message = sprintf(
@@ -24,4 +22,9 @@ if (!$dblink)
     trigger_error($message);
     return;
 }
+if(!mysqli_set_charset($dblink, 'utf8')) {
+    echo 'the connection is not in utf8';
+    exit();
+}
 $resmysqli=mysqli_select_db($dblink,myDB);
+
