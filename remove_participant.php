@@ -14,6 +14,7 @@ class remove_participant implements ResponseProcess {
     {
         $output = array();
         $dbF = new DBFunctions($dblink);
+        $frag_id = $_POST['view'];
         $event_id = $_POST["event_id"];
         $user_id = $_POST["user_id"];
         $event_is_private = $_POST["event_is_private"];
@@ -33,7 +34,10 @@ class remove_participant implements ResponseProcess {
                     $output["msg"] = $result_q;
 
                 }else{
-                    $output["flag"] = "success";
+                    if ($frag_id == "view")
+                        $output["flag"]= "view_succeed";
+                    else
+                        $output["flag"]= "success";
                     $output["msg"] = $result_q;
                 }
             }
@@ -52,7 +56,10 @@ class remove_participant implements ResponseProcess {
                         $output["flag"] = "failed";
                         $output["msg"] = $update_res;
                     } else
-                        $output["flag"] = "success";
+                        if ($frag_id == "view")
+                            $output["flag"]= "view_succeed";
+                        else
+                            $output["flag"]= "success";
                 }
                 else
                     {//if you delete user who were participating and was the last to get in the playing list - check if there's someone waiting to play
@@ -72,7 +79,10 @@ class remove_participant implements ResponseProcess {
                             $output["msg"] = $update_res;
                         }
                         else
-                            $output["flag"]= "success";
+                            if ($frag_id == "view")
+                                $output["flag"]= "view_succeed";
+                            else
+                                $output["flag"]= "success";
                     }
             }
         }

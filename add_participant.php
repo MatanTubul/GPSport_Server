@@ -17,6 +17,7 @@ class add_participant implements ResponseProcess
 
         $output = array();
         $dbF = new DBFunctions($dblink);
+        $frag_id = $_POST['view'];
         $user_id = $_POST['user_id'];
         $event_id = $_POST['event_id'];
         $event_details = $dbF->GetEventById($event_id);
@@ -49,7 +50,10 @@ class add_participant implements ResponseProcess
                         $output["msg"] = $update_res;
                     }
                     else
-                        $output["flag"]= "success";
+                        if ($frag_id == "view")
+                            $output["flag"]= "view_succeed";
+                        else
+                            $output["flag"]= "success";
                 }
 
             }else
@@ -72,8 +76,10 @@ class add_participant implements ResponseProcess
                             $output["msg"] = $update_res;
                         }
                         else
-                            $output["flag"]= "success";
-                    }
+                            if ($frag_id == "view")
+                                $output["flag"]= "view_succeed";
+                            else
+                                $output["flag"]= "success";                    }
                 }else
                 {//no place in this event for this user
                     $output["flag"]= "failed";

@@ -15,6 +15,7 @@ class invited_user implements ResponseProcess {
     {
         $output = array();
         $dbF = new DBFunctions($dblink);
+        $frag_id = $_POST['view'];
         $user_id = $_POST['user_id'];
         $event_id = $_POST['event_id'];
         $user_status = $_POST['user_status'];
@@ -47,7 +48,10 @@ class invited_user implements ResponseProcess {
                             $output["query_res"] = $result_e_q;
                         }
                         else{
-                            $output["flag"]= "updated";
+                            if ($frag_id == "view")
+                                $output["flag"]= "view_succeed";
+                            else
+                                $output["flag"]= "updated";
                             $output["msg"] = $result_q;
                         }
                     }
@@ -70,7 +74,10 @@ class invited_user implements ResponseProcess {
                             $output["flag"] = "failed";
                             $output["msg"] = $result_q;
                         } else {
-                            $output["flag"] = "updated";
+                            if ($frag_id == "view")
+                                $output["flag"]= "view_succeed";
+                            else
+                                $output["flag"]= "updated";
                             $output["msg"] = $result_q;
                         }
                     }
@@ -90,7 +97,10 @@ class invited_user implements ResponseProcess {
                                     $output["flag"] = "failed";
                                     $output["msg"] = $result_q;
                                 } else {
-                                    $output["flag"] = "updated";
+                                    if ($frag_id == "view")
+                                        $output["flag"]= "view_succeed";
+                                    else
+                                        $output["flag"]= "updated";
                                     $output["msg"] = $result_q;
                                 }
                             }

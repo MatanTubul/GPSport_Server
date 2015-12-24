@@ -16,6 +16,7 @@ class delete_manager implements ResponseProcess {
     {
         $output = array();
         $dbF = new DBFunctions($dblink);
+        $frag_id = $_POST['view'];
         $event_id = $_POST["event_id"];
         $userid = $_POST["user_id"];
         $event_details = $dbF-> GetEventById($event_id);
@@ -37,7 +38,10 @@ class delete_manager implements ResponseProcess {
                     $output["msg"] = $result_q;
 
                 } else {
-                    $output["flag"] = "success";
+                    if ($frag_id == "view")
+                        $output["flag"]= "view_succeed";
+                    else
+                        $output["flag"]= "success";
                     $output["msg"] = $result_q;
                     $no_of_rows = mysqli_num_rows($result_q);
                     //if number of candidates for manager gt than 0
@@ -70,7 +74,10 @@ class delete_manager implements ResponseProcess {
                                             $output["flag"] = "failed";
                                             $output["msg"] = $result_q;
                                         } else {
-                                            $output["flag"] = "success";
+                                            if ($frag_id == "view")
+                                                $output["flag"]= "view_succeed";
+                                            else
+                                                $output["flag"]= "success";
                                             $output["msg"] = "deleted user from event";
                                         }
                                     }
@@ -82,8 +89,11 @@ class delete_manager implements ResponseProcess {
                                             $output["flag"] = "failed";
                                             $output["msg"] = $update_res;
                                         } else
-                                            $output["flag"] = "success";
-                                    }
+                                            if ($frag_id == "view")
+                                                $output["flag"]= "view_succeed";
+                                            else
+                                                $output["flag"]= "success";
+                                }
                                     else
                                     {//if you delete user who were participating and was the last to get in the playing list - check if there's someone waiting to play
                                         // if so change his status and just dec the current waiting list count
@@ -102,8 +112,10 @@ class delete_manager implements ResponseProcess {
                                             $output["msg"] = $update_res;
                                         }
                                         else
-                                            $output["flag"]= "success";
-                                    }
+                                            if ($frag_id == "view")
+                                                $output["flag"]= "view_succeed";
+                                            else
+                                                $output["flag"]= "success";                                    }
                                 }
                             }
                         }
@@ -117,7 +129,10 @@ class delete_manager implements ResponseProcess {
                         $output["flag"] = "failed";
                         $output["msg"] = $result_q;
                     } else {
-                        $output["flag"] = "success";
+                        if ($frag_id == "view")
+                            $output["flag"]= "view_succeed";
+                        else
+                            $output["flag"]= "success";
                         $output["msg"] = $result_q;
                     }
                 } else {
@@ -126,7 +141,10 @@ class delete_manager implements ResponseProcess {
                         $output["flag"] = "failed";
                         $output["msg"] = $result_q;
                     } else {
-                        $output["flag"] = "success";
+                        if ($frag_id == "view")
+                            $output["flag"]= "view_succeed";
+                        else
+                            $output["flag"]= "success";
                         $output["msg"] = $result_q;
                     }
                 }
