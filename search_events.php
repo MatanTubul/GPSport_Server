@@ -51,7 +51,7 @@ class search_events implements ResponseProcess
             $output["start"] = $combined_date_and_time_start;
             $output["end"] = $combined_date_and_time_end;
 
-            $event_query = $dbF-> SearchEventsForRequest($user_long, $user_lat, $radius, $start, $end, $sport,$gen, $age, $public, $private);
+            $event_query = $dbF-> SearchEventsForRequest($user_long, $user_lat, $radius, $start, $end, $sport,$gen, $age, $public, $private, $combined_date_and_time_start, $combined_date_and_time_end);
         }
         else
             $event_query = $dbF->SearchEventsForDefault($user_long, $user_lat, $radius);

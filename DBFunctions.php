@@ -230,37 +230,36 @@ class DBFunctions {
         return $result_q;
     }
 
-    function SearchEventsForRequest($user_long, $user_lat, $radius, $start, $end, $sport, $gen, $age, $public, $private)
+    function SearchEventsForRequest($user_long, $user_lat, $radius, $start, $end, $sport, $gen, $age, $public, $private, $start, $end)
     {
         $event_query = "SELECT * from events WHERE acos(sin(events.latitude * 0.0175) * sin('$user_lat' * 0.0175)
               + cos(events.latitude * 0.0175) * cos('$user_lat' * 0.0175) * cos(('$user_long' * 0.0175) - (events.longitude * 0.0175))) * 6371 <= '$radius'
               AND (events.event_status = '1' OR events.event_status = '2' ) AND events.min_age >= '$age'";
 
-        if($sport != "General")
+        if ($sport != "General")
             $event_query .= "AND events.kind_of_sport = '$sport'";
 
-        if($gen != "Unisex")
+        if ($gen != "Unisex")
             $event_query .= "AND events.gender = '$gen'";
 
-        if($public == "true" AND $private == "false")
+        if ($public == "true" AND $private == "false")
             $event_query .= "AND events.private = 'false'";
-        elseif($public == "false" AND $private == "true")
-                $event_query .= "AND events.private = 'true'";
+        elseif ($public == "false" AND $private == "true")
+            $event_query .= "AND events.private = 'true'";
 
-        /*      AND DATE(events.start_time) = DATE(strtotime ('$start')) AND
-              TIME(events.start_time) > TIME(strtotime ('$start'))";
+        if (date($start) == date($end)) {//in case user pick to search on a times range of one day only
+            $event_query .= "AND DATE(events.start_time) = DATE('$start')";
+            $event_query .= "AND TIME(events.start_time) >= TIME('$start')";
+            $event_query .= "AND TIME(events.start_time) =< TIME('$end')";
+        } else {                         //in case user pick to search on a dates range
+            //cases regarding start search date
+            $event_query .= "AND ((DATE(events.start_time) = DATE('$start') AND TIME(events.start_time) >= TIME('$start'))
+                                    OR (DATE(events.start_time) > DATE('$start')))";
+            //cases regarding end search date
+            $event_query .= "AND ((DATE(events.start_time) = DATE('$end') AND TIME(events.start_time) <= TIME('$end'))
+                                    OR (DATE(events.start_time) < DATE('$end')))";
+        }
 
-        if (date($start) == date($end))
-            if (time($start) == time($end))
-                //events for this day only
-                $event_query .= "AND DATE(events.start_time) = DATE(strtotime ('$start'))";
-            else
-                //events for this day withing this hours
-
-        else
-                //events within this dates and hours
-
-*/
         $result_q = mysqli_query($this->con,$event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
