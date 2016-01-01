@@ -696,4 +696,11 @@ function ChangeStatusForAWaitingUser ($event_id){
         $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
         return $result_q;
     }
+
+    function getAllDBActiveEvents()
+    {
+        $query = "SELECT events.* from events WHERE events.event_status = '1' or events.event_status = '2'";
+        $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
+        return $result_q;
+    }
 }
