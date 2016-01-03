@@ -125,9 +125,9 @@ class DBFunctions {
 
 
 
-    function insertNewPublicParticipate($event_id, $user_id, $status)
+    function insertNewPublicParticipate($event_id, $user_id, $status, $place_in_queue)
     {
-        $query = "INSERT into attending(event_id, user_id, status) VALUES ('$event_id','$user_id','$status')";
+        $query = "INSERT into attending(event_id, user_id, status, waiting_stamp) VALUES ('$event_id','$user_id','$status','$place_in_queue')";
         $result_q = mysqli_query($this->con,$query) or die (mysqli_error($this->con));
         return $result_q;
 
@@ -274,15 +274,28 @@ class DBFunctions {
 
         $userIdInEvent = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'") or die (mysqli_error($this->con));
         $row = mysqli_fetch_assoc($userIdInEvent);
-        $userStatus = $row["status"];
+        $deletedUser = array();
+
+        $deletedUser["status"] = $row["status"];
+        $deletedUser["place"] =  $row["waiting_stamp"];
 
         $del_query = "DELETE from attending WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'";
         $result_q = mysqli_query($this->con,$del_query) or die (mysqli_error($this->con));
         if (!$result_q)
             return null;
 
-        return $userStatus;
+        return $deletedUser;
     }
+
+
+    function updateEventWaitingList($event_id, $place)
+{
+    $updateResult = mysqli_query($this->con,"UPDATE attending SET attending.waiting_stamp = attending.waiting_stamp - 1
+    WHERE attending.waiting_stamp > '$place' AND attending.event_id = '$event_id' ") or die((mysqli_error($this->con)));
+
+    return $updateResult;
+
+}
 
 function ChangeStatusForAWaitingUser ($event_id){
     $eventDetails = mysqli_query($this ->con,"SELECT * from events WHERE events.event_id = '$event_id'") or die (mysqli_error($this->con));
@@ -291,14 +304,19 @@ function ChangeStatusForAWaitingUser ($event_id){
     $event_row = mysqli_fetch_assoc($eventDetails);
     if (($event_row["max_participants"] == $event_row["current_participants"]) AND ($event_row["current_waiting"] != 0))
     {
-        $waitingUsersInEvent = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' AND attending.status = 'waiting'")or die (mysqli_error($this->con));
+        $waitingUsersInEvent = mysqli_query($this ->con,"SELECT * FROM attending WHERE attending.event_id = '$event_id' AND attending.status = 'waiting' AND attending.waiting_stamp = 1")or die (mysqli_error($this->con));
         if (!$waitingUsersInEvent)
             return null;
-        $some_random_user_row = mysqli_fetch_assoc($waitingUsersInEvent);
-        $user_id = $some_random_user_row["user_id"];
+        $first_user_waiting_list = mysqli_fetch_assoc($waitingUsersInEvent);
+        $user_id = $first_user_waiting_list["user_id"];
         $update_status = mysqli_query($this ->con,"UPDATE attending SET attending.status = 'participate' WHERE attending.event_id = '$event_id' AND attending.user_id = '$user_id'")or die (mysqli_error($this->con));
         if (!$update_status)
             return null;
+
+        $update_waiting_list = $this->updateEventWaitingList($event_id, $first_user_waiting_list["place"]);
+        if (!$update_waiting_list)
+            return null;
+
         return "changed";
     }
     return "not_changed";
@@ -574,7 +592,7 @@ function ChangeStatusForAWaitingUser ($event_id){
      */
     function GetEventListFromAttendingByUser($user_id,$status){
         $user_status = $status;
-        $query = "SELECT events.* from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE '$user_status' and (events.event_status = '1' or events.event_status = '2')";
+        $query = "SELECT events.*,attending.waiting_stamp from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE '$user_status' and (events.event_status = '1' or events.event_status = '2')";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }

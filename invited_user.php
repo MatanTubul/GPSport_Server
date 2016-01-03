@@ -87,7 +87,7 @@ class invited_user implements ResponseProcess {
                             $output["flag"] = "failed";
                             $output["msg"] = $result_q;
                         } else {
-                            $result_q = $dbF->insertNewPublicParticipate($event_id, $mng_id, "not attend"); //insert previous manager into attending table
+                            $result_q = $dbF->insertNewPublicParticipate($event_id, $mng_id, "not attend",-1); //insert previous manager into attending table
                             if (!$result_q) {
                                 $output["flag"] = "failed";
                                 $output["msg"] = $result_q;
