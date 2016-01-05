@@ -70,7 +70,7 @@ class add_participant implements ResponseProcess
                     }
                     else {
                         $update_res = $dbF->updateEventUsersCounting($event_id, "current_waiting", "inc");
-                        if(!$update_res)
+                        if(!$update_res )
                         {
                             $output["flag"]= "failed";
                             $output["msg"] = $update_res;
