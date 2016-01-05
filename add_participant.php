@@ -36,7 +36,7 @@ class add_participant implements ResponseProcess
             //Check if there's a place on playing list
             if ($event_current_participants < $event_max_participants) {
                 //add user to playing list
-                $insert_res = $dbF->insertNewPublicParticipate($event_id, $user_id, "participate");
+                $insert_res = $dbF->insertNewPublicParticipate($event_id, $user_id, "participate",-1);
                 if(!$insert_res)
                 {
                     $output["flag"]= "failed";
@@ -62,7 +62,7 @@ class add_participant implements ResponseProcess
                 //Check if there's a place on waiting list
                 if ($event_current_waiting < $event_waiting_list_size) {
                 //add user to waiting list
-                    $insert_res = $dbF->insertNewPublicParticipate($event_id, $user_id, "waiting");
+                    $insert_res = $dbF->insertNewPublicParticipate($event_id, $user_id, "waiting", $event_current_waiting + 1);
                     if(!$insert_res)
                     {
                         $output["flag"]= "failed";

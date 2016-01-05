@@ -50,16 +50,22 @@ class remove_participant implements ResponseProcess {
                 $output["msg"] = $result_status;
 
             }else {
-                if ($result_status == waiting) {
+                if ($result_status["status"] == waiting) {
                     $update_res = $dbF->updateEventUsersCounting($event_id, "current_waiting", "dec");
                     if (!$update_res) {
                         $output["flag"] = "failed";
                         $output["msg"] = $update_res;
                     } else
-                        if ($frag_id == "view")
-                            $output["flag"]= "view_succeed";
-                        else
-                            $output["flag"]= "success";
+                    {
+                        $update_waiting_list = $dbF->updateEventWaitingList($event_id, $result_status["place"]);
+                        if (!$update_waiting_list) {
+                            $output["flag"] = "failed";
+                            $output["msg"] = $update_waiting_list;
+                        } else if ($frag_id == "view")
+                                $output["flag"]= "view_succeed";
+                            else
+                                $output["flag"]= "success";
+                    }
                 }
                 else
                     {//if you delete user who were participating and was the last to get in the playing list - check if there's someone waiting to play
