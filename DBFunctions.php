@@ -723,8 +723,11 @@ function ChangeStatusForAWaitingUser ($event_id){
 
     function getAllDBActiveEvents()
     {
-        $query = "SELECT events.* from events WHERE events.event_status = '1' or events.event_status = '2'";
-        $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
+        date_default_timezone_set('Asia/Jerusalem');
+        $current_time = date('Y-m-d H:i:s');
+        $event_query = "SELECT * from events WHERE (events.event_status = '1' OR events.event_status = '2' ) AND DATE(events.start_time) = DATE('$current_time') AND
+              TIME(events.start_time) > TIME('$current_time')";
+        $result_q = mysqli_query($this->con, $event_query) or die (mysqli_error($this->con));
         return $result_q;
     }
 }
