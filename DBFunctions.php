@@ -712,11 +712,13 @@ function ChangeStatusForAWaitingUser ($event_id){
     function getEventsInvitationsListByUserId($user_id){
         $awaiting = "awaiting reply";
         $notAttend = "not attend";
+        date_default_timezone_set('Asia/Jerusalem');
+        $c_time = date("Y-m-d H:i:s");
         $query = "SELECT events.* from attending,events WHERE
         (events.manager_id = '$user_id' and events.event_status = '2')
         or
         (attending.user_id = '$user_id' and (attending.event_id = events.event_id and (attending.status = '$notAttend' or attending.status = '$awaiting')
-        and (events.event_status = '1' or events.event_status = '2')))";
+        and (events.event_status = '1' or events.event_status = '2')))and '$c_time' <= events.start_time ";
         $result_q = mysqli_query($this->con, $query) or die (mysqli_error($this->con));
         return $result_q;
     }
