@@ -1,6 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that handle all the requests of searching users via the
+ * creation of private event or update private event
  * User: matant
  * Date: 9/24/2015
  * Time: 11:29 AM

@@ -1,10 +1,12 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that create a connection to the DB
  * User: Nir B
  * Date: 17/08/2015
  * Time: 09:39
  */
+
 
 define ('mysql_host','localhost');
 define ('mysql_user','root');

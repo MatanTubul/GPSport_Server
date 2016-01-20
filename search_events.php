@@ -1,6 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that handle all the search (from current location or specific address)
+ * the class return a list of all the events. in case the list is empty the user get a proper message.
  * User: nirb
  * Date: 11/18/2015
  * Time: 5:47 PM

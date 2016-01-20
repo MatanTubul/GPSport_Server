@@ -1,6 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class which handle the forgot password request
+ * including verify the user input in the DB.
+ * in the end email back to the user the recovered password.
  * User: Nir B
  * Date: 8/17/2015
  * Time: 1:34 AM

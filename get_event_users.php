@@ -1,6 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that retrieve all the users of a specific event.
  * User: nirb
  * Date: 12/3/2015
  * Time: 5:42 PM

@@ -1,6 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
+ * handle all the requests for updating the user profile.
  * User: Nir B
  * Date: 22/09/2015
  * Time: 02:00

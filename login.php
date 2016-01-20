@@ -1,6 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class which handle all the login requests
  * User: Nir B
  * Date: 16/08/2015
  * Time: 15:24

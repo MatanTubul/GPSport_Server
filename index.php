@@ -1,6 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
+ * the index file which execute the specific command
+ * that sent by the application in the request tag
  * User: Nir B
  * Date: 08/16/2015
  * Time: 15:24

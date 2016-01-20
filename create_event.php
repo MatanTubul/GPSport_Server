@@ -1,6 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that handle all the create and update events request
+ * in addition in this class we using the GCM to send push notifications to the user.
  * User: matant
  * Date: 9/17/2015
  * Time: 2:56 PM

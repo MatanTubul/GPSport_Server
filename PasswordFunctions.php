@@ -1,6 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that encrypt and decrypt the user password.
  * User: matant
  * Date: 8/28/2015
  * Time: 10:08 AM

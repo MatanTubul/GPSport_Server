@@ -1,6 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
+ * the class that create a connection to the GCM and send a request
+ * to the GCM server to send a push notifications to specific users.
  * User: matant
  * Date: 10/27/2015
  * Time: 10:12 AM

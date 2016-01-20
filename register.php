@@ -1,6 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
+ * class that handle all the registration requests,
+ * in case the user is already register the registration failed.
  * User: Nir B
  * Date: 16/08/2015
  * Time: 17:52
