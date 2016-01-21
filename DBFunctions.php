@@ -592,7 +592,9 @@ function ChangeStatusForAWaitingUser ($event_id){
      */
     function GetEventListFromAttendingByUser($user_id,$status){
         $user_status = $status;
-        $query = "SELECT events.*,attending.waiting_stamp from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE '$user_status' and events.event_status = '1' ";
+        date_default_timezone_set('Asia/Jerusalem');
+        $c_time = date("Y-m-d H:i:s");
+        $query = "SELECT events.*,attending.waiting_stamp from events,attending WHERE attending.user_id = '$user_id' and events.event_id = attending.event_id and attending.status LIKE '$user_status' and events.event_status = '1' and '$c_time' < events.start_time ";
         $result = mysqli_query($this ->con,$query) or die (mysqli_error($this->con));
         return $result;
     }
